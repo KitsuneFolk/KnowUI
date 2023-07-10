@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings">Настройки</string>
+    <string name="back_button">Кнопка назад</string>
+
+    <string name="appearance">Внешний вид</string>
+    <string name="theme">Тема</string>
+    <string name="language">Язык</string>
+    <string name="another">Другое</string>
+    <string name="version">Версия %1$s</string>
+
+    <string name="default_language">ru</string>
+
+    <string name="cancel">Отменить</string>
+</resources>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="BlueTheme_colorBackground">#4B68FF</color>
+    <color name="DarkTheme_colorBackground">#141414</color>
+    <color name="PurpleTheme_colorBackground">#9966CC</color>
+    <color name="RedTheme_colorBackground">#DC3232</color>
+</resources>
