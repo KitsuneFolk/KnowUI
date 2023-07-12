@@ -1,7 +1,6 @@
-package com.pandacorp.knowui.screens
+package com.pandacorp.knowui.presentation.ui.screens
 
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -32,9 +31,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.pandacorp.knowui.FactItem
 import com.pandacorp.knowui.R
-import com.pandacorp.knowui.ui.theme.KnowUITheme
+import com.pandacorp.knowui.domain.models.FactItem
+import com.pandacorp.knowui.presentation.ui.theme.GrayBorder
+import com.pandacorp.knowui.presentation.ui.theme.KnowUITheme
 import com.pandacorp.knowui.utils.Constants
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
@@ -72,7 +72,7 @@ private fun CardComponent(content: String, modifier: Modifier = Modifier, onClic
             .clip(shape = RoundedCornerShape(20.dp))
             .clickable(onClick = onClick),
         shape = RoundedCornerShape(20.dp),
-        border = BorderStroke(1.dp, Color.LightGray)
+        border = GrayBorder
     ) {
         Box(
             modifier = modifier

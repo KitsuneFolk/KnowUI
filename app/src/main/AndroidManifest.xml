@@ -4,6 +4,7 @@
 
     <application
         android:allowBackup="true"
+        android:name=".presentation.di.App"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:localeConfig="@xml/locales_config"
@@ -12,7 +13,7 @@
         android:theme="@style/Theme.KnowUI"
         tools:targetApi="tiramisu">
         <activity
-            android:name=".MainActivity"
+            android:name="com.pandacorp.knowui.presentation.ui.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.KnowUI">
             <intent-filter>

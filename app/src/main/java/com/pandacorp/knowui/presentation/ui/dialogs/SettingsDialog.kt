@@ -1,8 +1,7 @@
-package com.pandacorp.knowui.dialogs
+package com.pandacorp.knowui.presentation.ui.dialogs
 
 import android.content.Context
 import android.graphics.drawable.Drawable
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.indication
@@ -38,12 +37,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.google.accompanist.drawablepainter.rememberDrawablePainter
 import com.pandacorp.knowui.R
-import com.pandacorp.knowui.data.CustomSharedPreferences
-import com.pandacorp.knowui.ui.theme.WhiteRippleTheme
+import com.pandacorp.knowui.data.repository.CustomSharedPreferencesImpl
+import com.pandacorp.knowui.presentation.ui.theme.GrayBorder
+import com.pandacorp.knowui.presentation.ui.theme.WhiteRippleTheme
+import com.pandacorp.knowui.utils.Constants
 
 @Composable
 fun SettingsDialog(
-    key: String = CustomSharedPreferences.THEME_KEY,
+    key: String = Constants.Preferences.THEME_KEY,
     onValueAppliedListener: (String) -> Unit = {},
     onDismiss: () -> Unit = {}
 ) {
@@ -52,7 +53,7 @@ fun SettingsDialog(
     val title: String
     val itemsList: List<SettingsDialogItem>
     val isRoundedImage: Boolean
-    if (key == CustomSharedPreferences.THEME_KEY) {
+    if (key == Constants.Preferences.THEME_KEY) {
         itemsList = fillThemesList(context)
         title = stringResource(R.string.theme)
         isRoundedImage = true
@@ -69,7 +70,7 @@ fun SettingsDialog(
             modifier = Modifier
                 .padding(16.dp)
                 .heightIn(max = 350.dp),
-            border = BorderStroke(1.dp, Color.LightGray),
+            border = GrayBorder,
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.primary,
             )
@@ -106,7 +107,7 @@ fun SettingsDialog(
                             .align(Alignment.End)
                             .padding(bottom = 16.dp, end = 16.dp),
                         shape = RoundedCornerShape(50),
-                        border = BorderStroke(1.dp, Color.White),
+                        border = GrayBorder,
                         onClick = onDismiss,
                     ) {
                         Text(text = stringResource(id = R.string.cancel), color = Color.White)
@@ -163,7 +164,7 @@ fun ItemComponent(
 }
 
 private fun fillThemesList(context: Context): List<SettingsDialogItem> {
-    val keysList = CustomSharedPreferences(context).getThemesKeys()
+    val keysList = CustomSharedPreferencesImpl.getThemesKeys(context)
     val titlesList = context.resources.getStringArray(R.array.Themes)
     val itemsList = context.resources.obtainTypedArray(R.array.Themes_drawables)
 
@@ -182,7 +183,7 @@ private fun fillThemesList(context: Context): List<SettingsDialogItem> {
 }
 
 private fun fillLanguagesList(context: Context): List<SettingsDialogItem> {
-    val keysList = CustomSharedPreferences(context).getLanguagesKeys()
+    val keysList = CustomSharedPreferencesImpl.getLanguagesKeys(context)
 
     val titlesList = context.resources.getStringArray(R.array.Languages)
     val drawablesList = context.resources.obtainTypedArray(R.array.Languages_drawables)
@@ -204,11 +205,11 @@ private fun fillLanguagesList(context: Context): List<SettingsDialogItem> {
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 private fun ThemeDialogPreview() {
-    SettingsDialog(key = CustomSharedPreferences.THEME_KEY)
+    SettingsDialog(key = Constants.Preferences.THEME_KEY)
 }
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 private fun LanguageDialogPreview() {
-    SettingsDialog(key = CustomSharedPreferences.LANGUAGE_KEY)
+    SettingsDialog(key = Constants.Preferences.LANGUAGE_KEY)
 }

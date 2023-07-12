@@ -1,4 +1,4 @@
-package com.pandacorp.knowui.dialogs
+package com.pandacorp.knowui.presentation.ui.dialogs
 
 import android.graphics.drawable.Drawable
 

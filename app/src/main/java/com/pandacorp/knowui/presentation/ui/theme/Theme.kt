@@ -1,6 +1,7 @@
-package com.pandacorp.knowui.ui.theme
+package com.pandacorp.knowui.presentation.ui.theme
 
 import android.app.Activity
+import android.util.Log
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
@@ -9,7 +10,7 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
-import com.pandacorp.knowui.data.CustomSharedPreferences
+import com.pandacorp.knowui.utils.Constants
 
 private val BlueColorScheme = darkColorScheme(
     primary = BlueTheme_colorPrimary,
@@ -41,15 +42,16 @@ private val RedColorScheme = darkColorScheme(
 
 @Composable
 fun KnowUITheme(
-    theme: String = CustomSharedPreferences.THEME_DEFAULT,
+    theme: String = Constants.Preferences.THEME_DEFAULT,
     content: @Composable () -> Unit
 ) {
-    val colorScheme = when(theme) {
-        CustomSharedPreferences.THEME_FOLLOW_SYSTEM -> if (isSystemInDarkTheme()) DarkColorScheme else BlueColorScheme
-        CustomSharedPreferences.THEME_BLUE -> BlueColorScheme
-        CustomSharedPreferences.THEME_DARK -> DarkColorScheme
-        CustomSharedPreferences.THEME_PURPLE -> PurpleColorScheme
-        CustomSharedPreferences.THEME_RED -> RedColorScheme
+    Log.d("TAG", "Theme: theme = $theme")
+    val colorScheme = when (theme) {
+        Constants.Preferences.THEME_FOLLOW_SYSTEM -> if (isSystemInDarkTheme()) DarkColorScheme else BlueColorScheme
+        Constants.Preferences.THEME_BLUE -> BlueColorScheme
+        Constants.Preferences.THEME_DARK -> DarkColorScheme
+        Constants.Preferences.THEME_PURPLE -> PurpleColorScheme
+        Constants.Preferences.THEME_RED -> RedColorScheme
         else -> throw IllegalArgumentException("Unresolved value = $theme")
     }
     val view = LocalView.current

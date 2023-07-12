@@ -1,4 +1,4 @@
-package com.pandacorp.knowui.ui.theme
+package com.pandacorp.knowui.presentation.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

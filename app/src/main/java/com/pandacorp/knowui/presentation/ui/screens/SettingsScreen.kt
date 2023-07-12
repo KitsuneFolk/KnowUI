@@ -1,7 +1,7 @@
-package com.pandacorp.knowui.screens
+package com.pandacorp.knowui.presentation.ui.screens
 
+import android.content.Context
 import android.content.res.Configuration
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -48,12 +48,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.pandacorp.knowui.R
-import com.pandacorp.knowui.data.CustomSharedPreferences
-import com.pandacorp.knowui.data.SavedPreferencesItem
-import com.pandacorp.knowui.dialogs.SettingsDialog
-import com.pandacorp.knowui.ui.theme.KnowUITheme
-import com.pandacorp.knowui.ui.theme.WhiteRippleTheme
+import com.pandacorp.knowui.data.repository.CustomSharedPreferencesImpl
+import com.pandacorp.knowui.domain.models.SavedPreferencesItem
+import com.pandacorp.knowui.presentation.ui.dialogs.SettingsDialog
+import com.pandacorp.knowui.presentation.ui.theme.GrayBorder
+import com.pandacorp.knowui.presentation.ui.theme.KnowUITheme
+import com.pandacorp.knowui.presentation.ui.theme.WhiteRippleTheme
+import com.pandacorp.knowui.presentation.viewmodel.PreferencesViewModel
+import com.pandacorp.knowui.utils.Constants
 import com.pandacorp.knowui.utils.getAppVersion
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -61,32 +65,31 @@ fun SettingsScreen(
     navController: NavController? = null,
     savedPreferences: SavedPreferencesItem = SavedPreferencesItem(
         "dark",
-        "en",
-        "DarkTheme Preview",
-        "English Preview"
-    ),
+        "en"
+    )
 ) {
     val context = LocalContext.current
-    val sp = CustomSharedPreferences(context)
+    val preferencesViewModel: PreferencesViewModel = koinViewModel()
+
     var openedDialog: String? by rememberSaveable { mutableStateOf(null) }
 
     when (openedDialog) {
-        CustomSharedPreferences.THEME_KEY ->
+        Constants.Preferences.THEME_KEY ->
             SettingsDialog(
-                key = CustomSharedPreferences.THEME_KEY,
+                key = Constants.Preferences.THEME_KEY,
                 onValueAppliedListener = {
                     openedDialog = null
-                    sp.changeTheme(it)
+                    preferencesViewModel.changeTheme(it)
                 }, onDismiss = {
                     openedDialog = null
                 })
 
-        CustomSharedPreferences.LANGUAGE_KEY ->
+        Constants.Preferences.LANGUAGE_KEY ->
             SettingsDialog(
-                key = CustomSharedPreferences.LANGUAGE_KEY,
+                key = Constants.Preferences.LANGUAGE_KEY,
                 onValueAppliedListener = {
                     openedDialog = null
-                    sp.changeLanguage(it)
+                    preferencesViewModel.changeLanguage(it)
                 }, onDismiss = {
                     openedDialog = null
                 })
@@ -119,7 +122,7 @@ fun SettingsScreen(
                         .fillMaxWidth()
                         .padding(horizontal = 20.dp)
                         .padding(top = 8.dp),
-                    border = BorderStroke(1.dp, Color.LightGray),
+                    border = GrayBorder,
                     colors = CardDefaults.cardColors(
                         containerColor = MaterialTheme.colorScheme.primary,
                     )
@@ -128,18 +131,18 @@ fun SettingsScreen(
                         CardComponent(
                             drawable = R.drawable.ic_theme,
                             text = stringResource(R.string.theme),
-                            value = savedPreferences.themeTitle,
+                            value = getThemeTitle(context, savedPreferences.theme),
                             onClick = {
-                                openedDialog = CustomSharedPreferences.THEME_KEY
+                                openedDialog = Constants.Preferences.THEME_KEY
                             }
                         )
 
                         CardComponent(
                             drawable = R.drawable.ic_language,
                             text = stringResource(R.string.language),
-                            value = savedPreferences.languageTitle,
+                            value = getLanguageTitle(context, savedPreferences.language),
                             onClick = {
-                                openedDialog = CustomSharedPreferences.LANGUAGE_KEY
+                                openedDialog = Constants.Preferences.LANGUAGE_KEY
                             }
                         )
                     }
@@ -164,9 +167,7 @@ fun SettingsScreen(
                         .padding(horizontal = 20.dp)
                         .fillMaxWidth()
                         .padding(top = 8.dp),
-                    border = BorderStroke(
-                        1.dp, Color.LightGray
-                    ),
+                    border = GrayBorder,
                     colors = CardDefaults.cardColors(
                         containerColor = MaterialTheme.colorScheme.primary,
                     ),
@@ -256,3 +257,13 @@ private fun SettingsScreenPreview() {
         SettingsScreen()
     }
 }
+
+private fun getThemeTitle(context: Context, key: String): String =
+    context.resources.getStringArray(R.array.Themes).toList()[CustomSharedPreferencesImpl.getThemesKeys(context)
+        .indexOf(key)]
+
+private fun getLanguageTitle(context: Context, key: String): String =
+    context.resources.getStringArray(R.array.Languages).toList()[CustomSharedPreferencesImpl.getLanguagesKeys(
+        context
+    )
+        .indexOf(key)]
