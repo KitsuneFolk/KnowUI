@@ -21,8 +21,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,6 +34,8 @@ import com.pandacorp.knowui.domain.models.FactItem
 import com.pandacorp.knowui.presentation.ui.theme.GrayBorder
 import com.pandacorp.knowui.presentation.ui.theme.KnowUITheme
 import com.pandacorp.knowui.utils.Constants
+import com.pandacorp.knowui.utils.topappbar.FixedTopAppBar
+import com.pandacorp.knowui.utils.topappbar.TopAppBarDefaults
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -91,7 +91,7 @@ private fun CardComponent(content: String, modifier: Modifier = Modifier, onClic
 @ExperimentalMaterial3Api
 @Composable
 fun MainAppBar(onClick: () -> Unit = {}) {
-    TopAppBar(
+    FixedTopAppBar(
         title = {
             Text(text = stringResource(id = R.string.app_name))
         },

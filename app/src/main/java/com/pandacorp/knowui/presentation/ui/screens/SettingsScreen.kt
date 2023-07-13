@@ -25,8 +25,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
@@ -57,6 +55,8 @@ import com.pandacorp.knowui.presentation.ui.theme.WhiteRippleTheme
 import com.pandacorp.knowui.presentation.viewmodel.PreferencesViewModel
 import com.pandacorp.knowui.utils.Constants
 import com.pandacorp.knowui.utils.getAppVersion
+import com.pandacorp.knowui.utils.topappbar.FixedTopAppBar
+import com.pandacorp.knowui.utils.topappbar.TopAppBarDefaults
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -236,11 +236,10 @@ private fun CardComponent(
 @ExperimentalMaterial3Api
 @Composable
 private fun BackButtonTopAppBar(onClick: () -> Unit = {}) {
-    TopAppBar(
+    FixedTopAppBar(
         title = {
             Text(text = stringResource(id = R.string.settings))
         },
-
         colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = MaterialTheme.colorScheme.primary),
         navigationIcon = {
             IconButton(onClick = onClick) {
@@ -259,11 +258,11 @@ private fun SettingsScreenPreview() {
 }
 
 private fun getThemeTitle(context: Context, key: String): String =
-    context.resources.getStringArray(R.array.Themes).toList()[CustomSharedPreferencesImpl.getThemesKeys(context)
+    context.resources.getStringArray(R.array.Themes)
+        .toList()[CustomSharedPreferencesImpl.getThemesKeys(context)
         .indexOf(key)]
 
 private fun getLanguageTitle(context: Context, key: String): String =
-    context.resources.getStringArray(R.array.Languages).toList()[CustomSharedPreferencesImpl.getLanguagesKeys(
-        context
-    )
+    context.resources.getStringArray(R.array.Languages)
+        .toList()[CustomSharedPreferencesImpl.getLanguagesKeys(context)
         .indexOf(key)]

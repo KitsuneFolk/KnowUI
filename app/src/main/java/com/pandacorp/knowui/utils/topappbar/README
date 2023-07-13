@@ -1,0 +1,19 @@
+This package contains files needed for work of FixedTopAppBar and the composable itself,
+modified by replacing the lines:
+```
+val fraction = if (colorTransitionFraction > 0.01f) 1f else 0f
+    val appBarContainerColor by animateColorAsState(
+        targetValue = colors.containerColor(fraction)
+        animationSpec = spring(stiffness = Spring.StiffnessMediumLow)
+    )
+```
+with:
+```
+val colorTransitionFraction = scrollBehavior?.state?.overlappedFraction ?: 0f
+    val appBarContainerColor by rememberUpdatedState(colors.containerColor(colorTransitionFraction))
+```
+to make animation of background changes smoother and synchronize it with the background color changes of all other
+composables in the app.
+Also some comments with unresolved references were removed, removed the ability to make the title's gravity center
+The source code of the TopAppBar Licensed under the Apache License, Version 2.0
+http://www.apache.org/licenses/LICENSE-2.0
