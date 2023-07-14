@@ -13,6 +13,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.fragula2.compose.FragulaNavHost
 import com.fragula2.compose.rememberFragulaNavController
 import com.fragula2.compose.swipeable
@@ -29,6 +30,8 @@ class MainActivity : AppCompatActivity() {
     private val preferencesViewModel: PreferencesViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen()
+
         val savedPreferences = preferencesViewModel.getSavedPreferences()
         preferencesViewModel.setLanguage(savedPreferences.language)
         super.onCreate(savedInstanceState)

@@ -10,12 +10,11 @@
         android:localeConfig="@xml/locales_config"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.KnowUI"
+        android:theme="@style/SplashScreenTheme"
         tools:targetApi="tiramisu">
         <activity
             android:name="com.pandacorp.knowui.presentation.ui.MainActivity"
-            android:exported="true"
-            android:theme="@style/Theme.KnowUI">
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
