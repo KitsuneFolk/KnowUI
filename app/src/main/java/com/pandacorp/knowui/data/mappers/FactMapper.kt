@@ -5,8 +5,5 @@ import com.pandacorp.knowui.domain.models.FactItem
 
 class FactMapper {
     fun toFactItem(factDataItem: FactDataItem): FactItem =
-        FactItem(factDataItem.contentEnglish)
-
-    fun toFactDataItem(factItem: FactItem): FactDataItem =
-        FactDataItem(factItem.contentEnglish)
+        FactItem(factDataItem.contentEnglish, tags = factDataItem.tags)
 }

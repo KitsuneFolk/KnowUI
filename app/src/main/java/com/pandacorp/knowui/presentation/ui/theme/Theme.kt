@@ -1,7 +1,6 @@
 package com.pandacorp.knowui.presentation.ui.theme
 
 import android.app.Activity
-import android.util.Log
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
@@ -45,7 +44,6 @@ fun KnowUITheme(
     theme: String = Constants.Preferences.THEME_DEFAULT,
     content: @Composable () -> Unit
 ) {
-    Log.d("TAG", "Theme: theme = $theme")
     val colorScheme = when (theme) {
         Constants.Preferences.THEME_FOLLOW_SYSTEM -> if (isSystemInDarkTheme()) DarkColorScheme else BlueColorScheme
         Constants.Preferences.THEME_BLUE -> BlueColorScheme

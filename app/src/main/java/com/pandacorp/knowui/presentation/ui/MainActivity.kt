@@ -11,15 +11,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.fragula2.compose.FragulaNavHost
 import com.fragula2.compose.rememberFragulaNavController
 import com.fragula2.compose.swipeable
+import com.pandacorp.knowui.R
 import com.pandacorp.knowui.domain.models.SavedPreferencesItem
 import com.pandacorp.knowui.presentation.ui.screens.MainScreen
 import com.pandacorp.knowui.presentation.ui.screens.SettingsScreen
 import com.pandacorp.knowui.presentation.ui.theme.KnowUITheme
 import com.pandacorp.knowui.presentation.viewmodel.PreferencesViewModel
+import com.pandacorp.knowui.utils.Constants
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity() {
@@ -31,20 +34,23 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            val theme by preferencesViewModel.themeLiveData.observeAsState(savedPreferences.theme)
-            val language by preferencesViewModel.languageLiveData.observeAsState(savedPreferences.language)
+            val defaultLanguage = stringResource(id = R.string.default_language)
+
+            val themeState by preferencesViewModel.themeLiveData.observeAsState(savedPreferences.theme)
+            val languageState by preferencesViewModel.languageLiveData.observeAsState(savedPreferences.language)
+
+            val theme = themeState.ifEmpty { Constants.Preferences.THEME_DEFAULT }
+            val language = languageState.ifEmpty { defaultLanguage }
 
             val rememberPreferences = remember(theme, language) {
                 SavedPreferencesItem(theme = theme, language = language)
             }
 
-            KnowUITheme(theme = theme) {
+            KnowUITheme(theme = rememberPreferences.theme) {
                 MainActivityContent(rememberPreferences)
             }
         }
     }
-
-
 }
 
 @Composable

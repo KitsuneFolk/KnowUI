@@ -30,16 +30,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.pandacorp.knowui.R
-import com.pandacorp.knowui.domain.models.FactItem
 import com.pandacorp.knowui.presentation.ui.theme.GrayBorder
 import com.pandacorp.knowui.presentation.ui.theme.KnowUITheme
-import com.pandacorp.knowui.utils.Constants
+import com.pandacorp.knowui.presentation.viewmodel.FactsViewModel
 import com.pandacorp.knowui.utils.topappbar.FixedTopAppBar
 import com.pandacorp.knowui.utils.topappbar.TopAppBarDefaults
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(navController: NavController? = null) {
+fun MainScreen(factsViewModel: FactsViewModel = koinViewModel(), navController: NavController? = null) {
     Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
         Scaffold(topBar = {
             MainAppBar {
@@ -48,9 +48,7 @@ fun MainScreen(navController: NavController? = null) {
         }) { padding ->
             // Use inside of a Box to apply the padding right
             Box(modifier = Modifier.padding(padding)) {
-                val facts = List(5) {
-                    FactItem(contentEnglish = Constants.loremIpsum)
-                }
+                val facts = factsViewModel.facts.value
                 VerticalPager(
                     pageCount = facts.size,
                     modifier = Modifier.fillMaxHeight(),
