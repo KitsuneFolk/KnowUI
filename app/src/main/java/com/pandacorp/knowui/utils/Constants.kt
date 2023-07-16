@@ -1,9 +1,6 @@
 package com.pandacorp.knowui.utils
 
 object Constants {
-    const val loremIpsum =
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce dapibus mauris pellentesque, porttitor purus nec, egestas velit. Donec pellentesque turpis nec elit venenatis, imperdiet placerat nunc semper. Nulla nisl purus, efficitur ut rhoncus et, malesuada vel magna. Nullam a felis."
-
     object Preferences {
         const val THEME_FOLLOW_SYSTEM = "follow_system"
         const val THEME_BLUE = "blue"
