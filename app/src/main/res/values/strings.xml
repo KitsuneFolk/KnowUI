@@ -13,4 +13,6 @@
     <string name="default_language">en</string>
 
     <string name="cancel">Cancel</string>
+
+    <string name="loading">Loading…</string>
 </resources>

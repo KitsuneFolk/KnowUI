@@ -12,4 +12,6 @@
     <string name="default_language">uk</string>
 
     <string name="cancel">Відмінити</string>
+
+    <string name="loading">Завантаження…</string>
 </resources>

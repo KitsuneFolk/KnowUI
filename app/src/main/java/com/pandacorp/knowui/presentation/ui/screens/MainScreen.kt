@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.VerticalPager
-import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
@@ -23,23 +22,26 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.google.accompanist.placeholder.PlaceholderHighlight
-import com.google.accompanist.placeholder.material.placeholder
-import com.google.accompanist.placeholder.shimmer
 import com.pandacorp.knowui.R
 import com.pandacorp.knowui.domain.models.FactItem
 import com.pandacorp.knowui.presentation.ui.theme.GrayBorder
 import com.pandacorp.knowui.presentation.ui.theme.KnowUITheme
 import com.pandacorp.knowui.presentation.viewmodel.FactsViewModel
+import com.pandacorp.knowui.utils.Animations
 import com.pandacorp.knowui.utils.topappbar.FixedTopAppBar
 import com.pandacorp.knowui.utils.topappbar.TopAppBarDefaults
+import com.valentinilk.shimmer.ShimmerBounds
+import com.valentinilk.shimmer.rememberShimmer
+import com.valentinilk.shimmer.shimmer
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -69,8 +71,8 @@ private fun Pager(items: List<FactItem>) {
         List(5) { placeholderFact }
     } else items
     VerticalPager(
+        pageCount = facts.size,
         modifier = Modifier.fillMaxHeight(),
-        state = rememberPagerState { facts.size }
     ) { pageIndex ->
         CardComponent(isPlaceHolder = isShowPlaceholder, content = facts[pageIndex].contentEnglish)
     }
@@ -83,11 +85,6 @@ private fun CardComponent(
     content: String,
     onClick: () -> Unit = {},
 ) {
-    val placeHolderModifier = Modifier.placeholder(
-        visible = true,
-        highlight = PlaceholderHighlight.shimmer(highlightColor = Color.White),
-        color = MaterialTheme.colorScheme.surface
-    )
     Card(
         elevation = CardDefaults.cardElevation(4.dp),
         modifier = modifier
@@ -99,18 +96,29 @@ private fun CardComponent(
         border = GrayBorder
     ) {
         Box(
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.surface)
                 .then(
-                    if (isPlaceHolder) placeHolderModifier
+                    if (isPlaceHolder) Modifier
                     else Modifier.padding(16.dp)
                 )
         ) {
-            Text(
-                text = content,
-                color = Color.White,
-            )
+            if (isPlaceHolder) {
+                Text(
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .shimmer(
+                            rememberShimmer(ShimmerBounds.View, theme = Animations.ShimmerTheme)
+                        )
+                        .padding(top = 4.dp),
+                    text = stringResource(id = R.string.loading),
+                    fontSize = 18.sp,
+                    color = Color.White
+                )
+            } else {
+                Text(text = content, color = Color.White)
+            }
         }
     }
 }

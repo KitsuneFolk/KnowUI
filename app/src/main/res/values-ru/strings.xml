@@ -12,4 +12,6 @@
     <string name="default_language">ru</string>
 
     <string name="cancel">Отменить</string>
+
+    <string name="loading">Загрузка…</string>
 </resources>
