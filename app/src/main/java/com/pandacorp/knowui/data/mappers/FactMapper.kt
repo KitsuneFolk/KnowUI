@@ -4,6 +4,10 @@ import com.pandacorp.knowui.data.models.FactDataItem
 import com.pandacorp.knowui.domain.models.FactItem
 
 class FactMapper {
-    fun toFactItem(factDataItem: FactDataItem): FactItem =
+    private fun toFactItem(factDataItem: FactDataItem): FactItem =
         FactItem(factDataItem.contentEnglish, tags = factDataItem.tags)
+
+    fun listToFactItem(list: List<FactDataItem>): List<FactItem> = list.map {
+        toFactItem(it)
+    }
 }

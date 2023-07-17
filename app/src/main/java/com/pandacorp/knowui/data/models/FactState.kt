@@ -1,6 +1,9 @@
 package com.pandacorp.knowui.data.models
 
-sealed class FactState<T>(val data: T? = null, val error: String? = null) {
-    class Success<T>(data: T) : FactState<T>(data = data)
-    class Error<T>(error: String, data: T? = null) : FactState<T>(error = error, data = data)
+import com.pandacorp.knowui.domain.models.FactItem
+
+sealed class FactState(val data: List<FactItem>? = null, val error: String? = null) {
+    class Success(data: List<FactItem>) : FactState(data = data)
+    class Error(error: String?, data: List<FactItem>? = null) : FactState(error = error, data = data)
+    class Loading : FactState()
 }

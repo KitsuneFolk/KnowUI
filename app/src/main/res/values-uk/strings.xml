@@ -14,4 +14,5 @@
     <string name="cancel">Відмінити</string>
 
     <string name="loading">Завантаження…</string>
+    <string name="loading_error">Помилка завантаження даних</string>
 </resources>

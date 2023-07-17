@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.VerticalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
@@ -19,9 +20,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.pandacorp.knowui.R
+import com.pandacorp.knowui.data.models.FactState
 import com.pandacorp.knowui.domain.models.FactItem
 import com.pandacorp.knowui.presentation.ui.theme.GrayBorder
 import com.pandacorp.knowui.presentation.ui.theme.KnowUITheme
@@ -48,15 +55,42 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun MainScreen(factsViewModel: FactsViewModel = koinViewModel(), navController: NavController? = null) {
     Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-        Scaffold(topBar = {
-            MainAppBar {
-                navController!!.navigate("SettingsScreen")
-            }
-        }) { padding ->
+        Scaffold(
+            topBar = {
+                MainAppBar {
+                    navController!!.navigate("SettingsScreen")
+                }
+            }) { padding ->
             // Use inside of a Box to apply the padding right
-            Box(modifier = Modifier.padding(padding)) {
-                val facts = factsViewModel.facts.value
-                Pager(facts)
+            Box(
+                modifier = Modifier
+                    .padding(padding)
+                    .fillMaxSize()
+            ) {
+                when (val facts = factsViewModel.facts.value) {
+                    is FactState.Success -> {
+                        Pager(items = facts.data!!) {
+                            factsViewModel.loadMoreFacts()
+                        }
+                    }
+
+                    is FactState.Error -> {
+                        Snackbar(
+                            modifier = Modifier
+                                .padding(bottom = 40.dp, start = 15.dp, end = 15.dp)
+                                .align(Alignment.BottomCenter), containerColor = MaterialTheme.colorScheme.surface
+                        ) {
+                            Text(
+                                text = stringResource(id = R.string.loading_error),
+                                color = Color.White
+                            )
+                        }
+                    }
+
+                    is FactState.Loading -> {
+                        Pager(items = listOf())
+                    }
+                }
             }
         }
     }
@@ -64,15 +98,32 @@ fun MainScreen(factsViewModel: FactsViewModel = koinViewModel(), navController: 
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun Pager(items: List<FactItem>) {
+private fun Pager(
+    items: List<FactItem>,
+    buffer: Int = 1,
+    onLoadMore: () -> Unit = {},
+) {
+    val pagerState = rememberPagerState()
+
     val isShowPlaceholder = items.isEmpty()
-    val facts = if (isShowPlaceholder) {
+    val facts: List<FactItem>
+    if (isShowPlaceholder) {
         val placeholderFact = FactItem()
-        List(5) { placeholderFact }
-    } else items
+        facts = List(5) { placeholderFact }
+    } else {
+        facts = items
+        val isAtTargetValue by remember(pagerState.currentPage) {
+            mutableStateOf(pagerState.currentPage == items.size - 1 - buffer)
+        }
+        LaunchedEffect(isAtTargetValue) {
+            if (isAtTargetValue) onLoadMore()
+        }
+    }
+
     VerticalPager(
         pageCount = facts.size,
         modifier = Modifier.fillMaxHeight(),
+        state = pagerState,
     ) { pageIndex ->
         CardComponent(isPlaceHolder = isShowPlaceholder, content = facts[pageIndex].contentEnglish)
     }
