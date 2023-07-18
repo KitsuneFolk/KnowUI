@@ -12,4 +12,10 @@ object Constants {
         const val THEME_KEY = "theme"
         const val LANGUAGE_KEY = "language"
     }
+
+    object Screen {
+        const val MAIN = "MainScreen"
+        const val SETTINGS = "SettingsScreen"
+        const val FACT = "FactScreen"
+    }
 }

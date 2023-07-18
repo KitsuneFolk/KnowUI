@@ -6,6 +6,7 @@ import com.pandacorp.knowui.data.repository.CustomSharedPreferencesImpl
 import com.pandacorp.knowui.data.repository.FactsRepositoryImpl
 import com.pandacorp.knowui.domain.repository.CustomSharedPreferences
 import com.pandacorp.knowui.domain.repository.FactsRepository
+import com.pandacorp.knowui.presentation.viewmodel.CurrentFactViewModel
 import com.pandacorp.knowui.presentation.viewmodel.FactsViewModel
 import com.pandacorp.knowui.presentation.viewmodel.PreferencesViewModel
 import org.koin.androidx.viewmodel.dsl.viewModelOf
@@ -20,4 +21,5 @@ val koinModule = module {
 
     viewModelOf(::PreferencesViewModel)
     viewModelOf(::FactsViewModel)
+    viewModelOf(::CurrentFactViewModel)
 }

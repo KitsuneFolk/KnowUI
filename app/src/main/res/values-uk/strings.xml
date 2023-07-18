@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="settings">Налаштування</string>
+    <string name="fact">Факт</string>
     <string name="back_button">Кнопка назад</string>
 
     <string name="appearance">Зовнішний вигляд</string>

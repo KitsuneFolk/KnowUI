@@ -98,7 +98,7 @@ fun SettingsScreen(
     }
 
     Scaffold(topBar = {
-        BackButtonTopAppBar {
+        BackButtonTopAppBar(title = R.string.settings) {
             navController?.popBackStack()
         }
     }) { padding ->
@@ -235,10 +235,10 @@ private fun CardComponent(
 
 @ExperimentalMaterial3Api
 @Composable
-private fun BackButtonTopAppBar(onClick: () -> Unit = {}) {
+fun BackButtonTopAppBar(title: Int = 0, onClick: () -> Unit = {}) {
     FixedTopAppBar(
         title = {
-            Text(text = stringResource(id = R.string.settings))
+            Text(text = stringResource(id = title))
         },
         colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = MaterialTheme.colorScheme.primary),
         navigationIcon = {

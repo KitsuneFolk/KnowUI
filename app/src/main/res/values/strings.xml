@@ -2,6 +2,7 @@
     <string name="app_name" translatable="false">KnowUI</string>
 
     <string name="settings">Settings</string>
+    <string name="fact">Fact</string>
     <string name="back_button">Back button</string>
 
     <string name="appearance">Appearance</string>

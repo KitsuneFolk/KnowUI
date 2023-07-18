@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
@@ -14,11 +15,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import com.fragula2.compose.FragulaNavHost
 import com.fragula2.compose.rememberFragulaNavController
 import com.fragula2.compose.swipeable
 import com.pandacorp.knowui.R
 import com.pandacorp.knowui.domain.models.SavedPreferencesItem
+import com.pandacorp.knowui.presentation.ui.screens.FactScreen
 import com.pandacorp.knowui.presentation.ui.screens.MainScreen
 import com.pandacorp.knowui.presentation.ui.screens.SettingsScreen
 import com.pandacorp.knowui.presentation.ui.theme.KnowUITheme
@@ -69,15 +72,31 @@ private fun MainActivityContent(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
     ) {
+        // viewModelStoreOwner to get a shared CurrentFactViewModel in MainScreen and FactScreen
+        val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
+            "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
+        }
         FragulaNavHost(
             navController = navController,
-            startDestination = "MainScreen",
+            startDestination = Constants.Screen.MAIN,
         ) {
-            swipeable("MainScreen") {
-                MainScreen(navController = navController)
+            swipeable(Constants.Screen.MAIN) {
+                CompositionLocalProvider(
+                    LocalViewModelStoreOwner provides viewModelStoreOwner
+                ) {
+                    MainScreen(navController = navController)
+                }
             }
-            swipeable("SettingsScreen") {
+            swipeable(Constants.Screen.SETTINGS) {
                 SettingsScreen(navController = navController, savedPreferences = savedPreferences)
+            }
+
+            swipeable(Constants.Screen.FACT) {
+                CompositionLocalProvider(
+                    LocalViewModelStoreOwner provides viewModelStoreOwner
+                ) {
+                    FactScreen(navController = navController)
+                }
             }
         }
     }

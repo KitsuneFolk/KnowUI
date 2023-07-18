@@ -37,6 +37,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -46,8 +47,10 @@ import com.pandacorp.knowui.data.models.FactState
 import com.pandacorp.knowui.domain.models.FactItem
 import com.pandacorp.knowui.presentation.ui.theme.GrayBorder
 import com.pandacorp.knowui.presentation.ui.theme.KnowUITheme
+import com.pandacorp.knowui.presentation.viewmodel.CurrentFactViewModel
 import com.pandacorp.knowui.presentation.viewmodel.FactsViewModel
 import com.pandacorp.knowui.utils.Animations
+import com.pandacorp.knowui.utils.Constants
 import com.pandacorp.knowui.utils.topappbar.FixedTopAppBar
 import com.pandacorp.knowui.utils.topappbar.TopAppBarDefaults
 import com.valentinilk.shimmer.ShimmerBounds
@@ -57,12 +60,12 @@ import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(factsViewModel: FactsViewModel = koinViewModel(), navController: NavController? = null) {
+fun MainScreen(navController: NavController? = null, factsViewModel: FactsViewModel = koinViewModel(), currentFactViewModel: CurrentFactViewModel = koinViewModel()) {
     Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
         Scaffold(
             topBar = {
                 MainAppBar {
-                    navController!!.navigate("SettingsScreen")
+                    navController!!.navigate(Constants.Screen.SETTINGS)
                 }
             }) { padding ->
             // Use inside of a Box to apply the padding right
@@ -73,9 +76,12 @@ fun MainScreen(factsViewModel: FactsViewModel = koinViewModel(), navController: 
             ) {
                 when (val facts = factsViewModel.facts.value) {
                     is FactState.Success -> {
-                        Pager(items = facts.data!!, isLoadMore = factsViewModel.isStopLoading.value) {
+                        Pager(items = facts.data!!, isLoadMore = factsViewModel.isStopLoading.value, onLoadMore = {
                             factsViewModel.loadMoreFacts()
-                        }
+                        }, onFactClick = { fact ->
+                            currentFactViewModel.setFact(fact)
+                            navController!!.navigate(Constants.Screen.FACT)
+                        })
                     }
 
                     is FactState.Error -> {
@@ -107,7 +113,8 @@ private fun Pager(
     isShowPlaceholder: Boolean = false,
     buffer: Int = 1,
     isLoadMore: Boolean = false,
-    onLoadMore: (() -> Unit) = {},
+    onLoadMore: () -> Unit = {},
+    onFactClick: (fact: FactItem) -> Unit = {},
 ) {
     val pagerState = rememberPagerState()
 
@@ -136,7 +143,9 @@ private fun Pager(
             isPlaceHolder = isShowPlaceholder,
             isReachedEnd = ((pageIndex == facts.size - 1) && !isLoadMore),
             content = facts[pageIndex].contentEnglish
-        )
+        ) {
+            onFactClick(facts[pageIndex])
+        }
     }
 }
 
@@ -148,7 +157,7 @@ private fun CardComponent(
     content: String,
     onClick: () -> Unit = {},
 ) {
-    val isLandscape =  LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
+    val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
     Column {
         Card(
             elevation = CardDefaults.cardElevation(4.dp),
@@ -186,7 +195,7 @@ private fun CardComponent(
                         fontSize = 18.sp,
                         color = Color.White
                     )
-                } else Text(text = content, color = Color.White)
+                } else Text(text = content, color = Color.White, overflow = TextOverflow.Ellipsis)
             }
         }
         if (isReachedEnd) {
