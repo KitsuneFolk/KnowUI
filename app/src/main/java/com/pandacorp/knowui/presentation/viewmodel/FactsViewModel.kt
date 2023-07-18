@@ -17,7 +17,7 @@ class FactsViewModel(private val factsRepository: FactsRepository) : ViewModel()
 
     private val _facts = mutableStateOf<FactState>(FactState.Loading())
     val facts: State<FactState> = _facts
-    private val isStopLoading: MutableState<Boolean> = mutableStateOf(false)
+    val isStopLoading: MutableState<Boolean> = mutableStateOf(false)
 
     init {
         getFacts()

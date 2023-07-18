@@ -1,12 +1,15 @@
 package com.pandacorp.knowui.presentation.ui.screens
 
+import android.content.res.Configuration
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -32,6 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -69,7 +73,7 @@ fun MainScreen(factsViewModel: FactsViewModel = koinViewModel(), navController: 
             ) {
                 when (val facts = factsViewModel.facts.value) {
                     is FactState.Success -> {
-                        Pager(items = facts.data!!) {
+                        Pager(items = facts.data!!, isLoadMore = factsViewModel.isStopLoading.value) {
                             factsViewModel.loadMoreFacts()
                         }
                     }
@@ -88,7 +92,7 @@ fun MainScreen(factsViewModel: FactsViewModel = koinViewModel(), navController: 
                     }
 
                     is FactState.Loading -> {
-                        Pager(items = listOf())
+                        Pager(items = listOf(), isShowPlaceholder = true)
                     }
                 }
             }
@@ -100,23 +104,26 @@ fun MainScreen(factsViewModel: FactsViewModel = koinViewModel(), navController: 
 @Composable
 private fun Pager(
     items: List<FactItem>,
+    isShowPlaceholder: Boolean = false,
     buffer: Int = 1,
-    onLoadMore: () -> Unit = {},
+    isLoadMore: Boolean = false,
+    onLoadMore: (() -> Unit) = {},
 ) {
     val pagerState = rememberPagerState()
 
-    val isShowPlaceholder = items.isEmpty()
     val facts: List<FactItem>
     if (isShowPlaceholder) {
         val placeholderFact = FactItem()
         facts = List(5) { placeholderFact }
     } else {
         facts = items
-        val isAtTargetValue by remember(pagerState.currentPage) {
-            mutableStateOf(pagerState.currentPage == items.size - 1 - buffer)
-        }
-        LaunchedEffect(isAtTargetValue) {
-            if (isAtTargetValue) onLoadMore()
+        if (isLoadMore) {
+            val isAtTargetValue by remember(pagerState.currentPage) {
+                mutableStateOf(pagerState.currentPage == items.size - 1 - buffer)
+            }
+            LaunchedEffect(isAtTargetValue) {
+                if (isAtTargetValue) onLoadMore()
+            }
         }
     }
 
@@ -125,7 +132,11 @@ private fun Pager(
         modifier = Modifier.fillMaxHeight(),
         state = pagerState,
     ) { pageIndex ->
-        CardComponent(isPlaceHolder = isShowPlaceholder, content = facts[pageIndex].contentEnglish)
+        CardComponent(
+            isPlaceHolder = isShowPlaceholder,
+            isReachedEnd = ((pageIndex == facts.size - 1) && !isLoadMore),
+            content = facts[pageIndex].contentEnglish
+        )
     }
 }
 
@@ -133,43 +144,60 @@ private fun Pager(
 private fun CardComponent(
     modifier: Modifier = Modifier,
     isPlaceHolder: Boolean = true,
+    isReachedEnd: Boolean = false,
     content: String,
     onClick: () -> Unit = {},
 ) {
-    Card(
-        elevation = CardDefaults.cardElevation(4.dp),
-        modifier = modifier
-            .fillMaxSize()
-            .padding(8.dp)
-            .clip(shape = RoundedCornerShape(20.dp))
-            .clickable(onClick = onClick),
-        shape = RoundedCornerShape(20.dp),
-        border = GrayBorder
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.surface)
+    val isLandscape =  LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
+    Column {
+        Card(
+            elevation = CardDefaults.cardElevation(4.dp),
+            modifier = modifier
                 .then(
-                    if (isPlaceHolder) Modifier
-                    else Modifier.padding(16.dp)
+                    if (isReachedEnd)
+                        Modifier.fillMaxHeight(if (isLandscape) 0.75f else 0.9f)
+                    else Modifier.fillMaxHeight()
                 )
+                .fillMaxWidth()
+                .padding(8.dp)
+                .clip(shape = RoundedCornerShape(20.dp))
+                .clickable(onClick = onClick),
+            shape = RoundedCornerShape(20.dp),
+            border = GrayBorder
         ) {
-            if (isPlaceHolder) {
-                Text(
-                    modifier = Modifier
-                        .align(Alignment.Center)
-                        .shimmer(
-                            rememberShimmer(ShimmerBounds.View, theme = Animations.ShimmerTheme)
-                        )
-                        .padding(top = 4.dp),
-                    text = stringResource(id = R.string.loading),
-                    fontSize = 18.sp,
-                    color = Color.White
-                )
-            } else {
-                Text(text = content, color = Color.White)
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.surface)
+                    .then(
+                        if (isPlaceHolder) Modifier
+                        else Modifier.padding(16.dp)
+                    )
+            ) {
+                if (isPlaceHolder) {
+                    Text(
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .shimmer(
+                                rememberShimmer(ShimmerBounds.View, theme = Animations.ShimmerTheme)
+                            )
+                            .padding(top = 4.dp),
+                        text = stringResource(id = R.string.loading),
+                        fontSize = 18.sp,
+                        color = Color.White
+                    )
+                } else Text(text = content, color = Color.White)
             }
+        }
+        if (isReachedEnd) {
+            Text(
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(horizontal = 16.dp)
+                    .padding(top = 4.dp, bottom = 8.dp),
+                text = stringResource(id = R.string.end_reached),
+                color = Color.White
+            )
         }
     }
 }
