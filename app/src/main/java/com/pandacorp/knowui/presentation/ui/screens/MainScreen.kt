@@ -183,7 +183,9 @@ private fun CardComponent(
                 .fillMaxWidth()
                 .padding(8.dp)
                 .clip(shape = RoundedCornerShape(20.dp))
-                .clickable(onClick = onClick),
+                .clickable(onClick = {
+                    if (!isPlaceHolder && imageUri != null) onClick()
+                }),
             shape = RoundedCornerShape(20.dp),
             border = GrayBorder
         ) {
