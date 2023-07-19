@@ -71,6 +71,7 @@ dependencies {
     implementation 'com.github.Jintin.PreferencesExtension:preferences:1.3.0' // Get preferences as LiveData
     implementation 'androidx.core:core-splashscreen:1.0.1' // Splash screen
     implementation "com.valentinilk.shimmer:compose-shimmer:1.0.5" // Placeholder
+    implementation("io.coil-kt:coil-compose:2.4.0")// Image loading
 
     // Koin
     implementation "io.insert-koin:koin-androidx-compose:3.4.2"
@@ -79,4 +80,5 @@ dependencies {
     implementation platform("com.google.firebase:firebase-bom:32.1.1")
     implementation 'com.google.firebase:firebase-common-ktx:20.3.3'
     implementation 'com.google.firebase:firebase-firestore-ktx:24.6.1'
+    implementation 'com.google.firebase:firebase-storage-ktx:20.2.1'
 }

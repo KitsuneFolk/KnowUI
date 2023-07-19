@@ -1,6 +1,7 @@
 package com.pandacorp.knowui.presentation.di
 
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import com.pandacorp.knowui.data.mappers.FactMapper
 import com.pandacorp.knowui.data.repository.CustomSharedPreferencesImpl
 import com.pandacorp.knowui.data.repository.FactsRepositoryImpl
@@ -16,8 +17,9 @@ import org.koin.dsl.module
 val koinModule = module {
     singleOf(::FactMapper)
     single<CustomSharedPreferences> { CustomSharedPreferencesImpl(get()) }
-    single<FactsRepository> { FactsRepositoryImpl(get(), get()) }
+    single<FactsRepository> { FactsRepositoryImpl(get(), get(), get()) }
     single { FirebaseFirestore.getInstance() }
+    single { FirebaseStorage.getInstance() }
 
     viewModelOf(::PreferencesViewModel)
     viewModelOf(::FactsViewModel)

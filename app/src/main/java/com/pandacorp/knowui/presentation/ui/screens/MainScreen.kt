@@ -2,11 +2,15 @@ package com.pandacorp.knowui.presentation.ui.screens
 
 import android.content.res.Configuration
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
+import android.graphics.drawable.ColorDrawable
+import android.net.Uri
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -42,6 +46,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import coil.compose.rememberAsyncImagePainter
+import com.google.accompanist.drawablepainter.rememberDrawablePainter
 import com.pandacorp.knowui.R
 import com.pandacorp.knowui.data.models.FactState
 import com.pandacorp.knowui.domain.models.FactItem
@@ -60,7 +66,11 @@ import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(navController: NavController? = null, factsViewModel: FactsViewModel = koinViewModel(), currentFactViewModel: CurrentFactViewModel = koinViewModel()) {
+fun MainScreen(
+    navController: NavController? = null,
+    factsViewModel: FactsViewModel = koinViewModel(),
+    currentFactViewModel: CurrentFactViewModel = koinViewModel(),
+) {
     Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
         Scaffold(
             topBar = {
@@ -139,10 +149,12 @@ private fun Pager(
         modifier = Modifier.fillMaxHeight(),
         state = pagerState,
     ) { pageIndex ->
+        val factItem = facts[pageIndex]
         CardComponent(
             isPlaceHolder = isShowPlaceholder,
             isReachedEnd = ((pageIndex == facts.size - 1) && !isLoadMore),
-            content = facts[pageIndex].contentEnglish
+            content = factItem.contentEnglish,
+            imageUri = factItem.imageUri
         ) {
             onFactClick(facts[pageIndex])
         }
@@ -154,17 +166,18 @@ private fun CardComponent(
     modifier: Modifier = Modifier,
     isPlaceHolder: Boolean = true,
     isReachedEnd: Boolean = false,
+    imageUri: Uri?,
     content: String,
     onClick: () -> Unit = {},
 ) {
     val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
+
     Column {
         Card(
             elevation = CardDefaults.cardElevation(4.dp),
             modifier = modifier
                 .then(
-                    if (isReachedEnd)
-                        Modifier.fillMaxHeight(if (isLandscape) 0.75f else 0.9f)
+                    if (isReachedEnd) Modifier.fillMaxHeight(if (isLandscape) 0.75f else 0.9f)
                     else Modifier.fillMaxHeight()
                 )
                 .fillMaxWidth()
@@ -174,30 +187,13 @@ private fun CardComponent(
             shape = RoundedCornerShape(20.dp),
             border = GrayBorder
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.surface)
-                    .then(
-                        if (isPlaceHolder) Modifier
-                        else Modifier.padding(16.dp)
-                    )
-            ) {
-                if (isPlaceHolder) {
-                    Text(
-                        modifier = Modifier
-                            .align(Alignment.Center)
-                            .shimmer(
-                                rememberShimmer(ShimmerBounds.View, theme = Animations.ShimmerTheme)
-                            )
-                            .padding(top = 4.dp),
-                        text = stringResource(id = R.string.loading),
-                        fontSize = 18.sp,
-                        color = Color.White
-                    )
-                } else Text(text = content, color = Color.White, overflow = TextOverflow.Ellipsis)
+            if (isPlaceHolder) CardPlaceholderContent()
+            else {
+                if (isLandscape) CardLandscapeContent(imageUri, content)
+                else CardPortraitContent(imageUri, content)
             }
         }
+
         if (isReachedEnd) {
             Text(
                 modifier = Modifier
@@ -209,6 +205,112 @@ private fun CardComponent(
             )
         }
     }
+}
+
+@Composable
+private fun CardPlaceholderContent() {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.surface)
+    ) {
+        Text(
+            modifier = Modifier
+                .align(Alignment.Center)
+                .shimmer(
+                    rememberShimmer(ShimmerBounds.View, theme = Animations.ShimmerTheme)
+                )
+                .padding(top = 4.dp),
+            text = stringResource(id = R.string.loading),
+            fontSize = 18.sp,
+            color = Color.White
+        )
+    }
+}
+
+@Composable
+private fun CardLandscapeContent(imageUri: Uri?, content: String) {
+    Row(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.surface)
+            .padding(horizontal = 4.dp, vertical = 8.dp)
+    ) {
+        if (imageUri == null) {
+            CardPlaceholderImage(
+                modifier = Modifier
+                    .fillMaxHeight(0.8f)
+                    .fillMaxWidth(0.4f)
+                    .align(Alignment.CenterVertically)
+            )
+        } else {
+            Image(
+                modifier = Modifier
+                    .fillMaxHeight(0.8f)
+                    .fillMaxWidth(0.4f)
+                    .padding(start = 8.dp)
+                    .align(Alignment.CenterVertically),
+                painter = rememberAsyncImagePainter(imageUri),
+                contentDescription = null,
+            )
+        }
+        Text(
+            modifier = Modifier
+                .padding(start = 12.dp)
+                .weight(1f)
+                .align(Alignment.CenterVertically),
+            text = content,
+            color = Color.White,
+            overflow = TextOverflow.Ellipsis
+        )
+    }
+}
+
+@Composable
+private fun CardPortraitContent(imageUri: Uri?, content: String) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.surface)
+            .padding(16.dp)
+    ) {
+        if (imageUri == null) {
+            CardPlaceholderImage(
+                modifier = Modifier
+                    .fillMaxHeight(0.4f)
+                    .fillMaxWidth(1f)
+                    .align(Alignment.CenterHorizontally)
+            )
+        } else {
+            Image(
+                modifier = Modifier
+                    .fillMaxHeight(0.4f)
+                    .fillMaxWidth(1f)
+                    .align(Alignment.CenterHorizontally),
+                painter = rememberAsyncImagePainter(imageUri),
+                contentDescription = null,
+            )
+        }
+        Text(
+            modifier = Modifier.padding(top = 6.dp),
+            text = content,
+            color = Color.White,
+            overflow = TextOverflow.Ellipsis
+        )
+    }
+}
+
+@Composable
+private fun CardPlaceholderImage(modifier: Modifier = Modifier) {
+    Image(
+        painter = rememberDrawablePainter(drawable = ColorDrawable(android.graphics.Color.DKGRAY)),
+        modifier = modifier
+            .padding(16.dp)
+            .shimmer(
+                rememberShimmer(ShimmerBounds.View, theme = Animations.ShimmerTheme)
+            ),
+        contentDescription = null,
+    )
 }
 
 @ExperimentalMaterial3Api

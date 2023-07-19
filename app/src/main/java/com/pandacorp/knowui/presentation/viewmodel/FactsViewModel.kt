@@ -6,9 +6,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pandacorp.knowui.data.models.FactState
+import com.pandacorp.knowui.domain.models.FactItem
 import com.pandacorp.knowui.domain.repository.FactsRepository
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 
 class FactsViewModel(private val factsRepository: FactsRepository) : ViewModel() {
     companion object {
@@ -26,14 +28,25 @@ class FactsViewModel(private val factsRepository: FactsRepository) : ViewModel()
     private fun getFacts(limit: Long = factsLimit) {
         factsRepository.getFacts(limit = limit).onEach { state ->
             _facts.value = when (state) {
-                is FactState.Success -> FactState.Success(data = state.data!!)
+                is FactState.Success -> {
+                    // Now load the images for the fetched facts
+                    loadImages(state.data ?: emptyList())
+                    FactState.Success(data = state.data ?: emptyList())
+                }
 
                 is FactState.Error -> FactState.Error(error = state.error)
 
                 else -> throw IllegalArgumentException("Unexpected state: $state")
             }
-
         }.launchIn(viewModelScope)
+    }
+
+    // Function to load images for the fetched facts
+    private fun loadImages(facts: List<FactItem>) {
+        viewModelScope.launch {
+            val factsWithImages = factsRepository.loadImagesForFacts(facts)
+            _facts.value = FactState.Success(data = factsWithImages)
+        }
     }
 
     fun loadMoreFacts(limit: Long = factsLimit) {
@@ -41,19 +54,16 @@ class FactsViewModel(private val factsRepository: FactsRepository) : ViewModel()
         factsRepository.loadMoreFacts(limit = limit).onEach { state ->
             _facts.value = when (state) {
                 is FactState.Success -> {
-                    val newData = _facts.value.data?.plus(state.data!!) ?: state.data!!
-                    if (state.data.isNullOrEmpty()) {
-                        isStopLoading.value = true
-                        FactState.Success(data = newData)
-                    }
-                    else FactState.Success(data = newData)
+                    val newData = _facts.value.data?.plus(state.data ?: emptyList()) ?: state.data ?: emptyList()
+                    loadImages(newData)
+                    if (state.data.isNullOrEmpty()) isStopLoading.value = true
+                    FactState.Success(data = newData)
                 }
 
                 is FactState.Error -> FactState.Error(error = state.error)
 
                 else -> throw IllegalArgumentException("Unexpected state: $state")
             }
-
         }.launchIn(viewModelScope)
     }
 }
