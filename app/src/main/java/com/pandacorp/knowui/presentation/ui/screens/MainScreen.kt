@@ -46,7 +46,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import coil.compose.rememberAsyncImagePainter
+import coil.compose.AsyncImage
 import com.google.accompanist.drawablepainter.rememberDrawablePainter
 import com.pandacorp.knowui.R
 import com.pandacorp.knowui.data.models.FactState
@@ -189,8 +189,16 @@ private fun CardComponent(
         ) {
             if (isPlaceHolder) CardPlaceholderContent()
             else {
-                if (isLandscape) CardLandscapeContent(imageUri, content)
-                else CardPortraitContent(imageUri, content)
+                if (isLandscape) CardLandscapeContent(
+                    modifier = Modifier.background(MaterialTheme.colorScheme.surface),
+                    imageUri = imageUri,
+                    content = content
+                )
+                else CardPortraitContent(
+                    modifier = Modifier.background(MaterialTheme.colorScheme.surface),
+                    imageUri = imageUri,
+                    content = content
+                )
             }
         }
 
@@ -208,7 +216,7 @@ private fun CardComponent(
 }
 
 @Composable
-private fun CardPlaceholderContent() {
+fun CardPlaceholderContent() {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -229,11 +237,10 @@ private fun CardPlaceholderContent() {
 }
 
 @Composable
-private fun CardLandscapeContent(imageUri: Uri?, content: String) {
+fun CardLandscapeContent(modifier: Modifier = Modifier, imageUri: Uri?, content: String) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.surface)
             .padding(horizontal = 4.dp, vertical = 8.dp)
     ) {
         if (imageUri == null) {
@@ -244,13 +251,13 @@ private fun CardLandscapeContent(imageUri: Uri?, content: String) {
                     .align(Alignment.CenterVertically)
             )
         } else {
-            Image(
+            AsyncImage(
                 modifier = Modifier
                     .fillMaxHeight(0.8f)
                     .fillMaxWidth(0.4f)
                     .padding(start = 8.dp)
                     .align(Alignment.CenterVertically),
-                painter = rememberAsyncImagePainter(imageUri),
+                model = imageUri,
                 contentDescription = null,
             )
         }
@@ -267,11 +274,10 @@ private fun CardLandscapeContent(imageUri: Uri?, content: String) {
 }
 
 @Composable
-private fun CardPortraitContent(imageUri: Uri?, content: String) {
+fun CardPortraitContent(modifier: Modifier = Modifier, imageUri: Uri?, content: String) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.surface)
             .padding(16.dp)
     ) {
         if (imageUri == null) {
@@ -282,12 +288,12 @@ private fun CardPortraitContent(imageUri: Uri?, content: String) {
                     .align(Alignment.CenterHorizontally)
             )
         } else {
-            Image(
+            AsyncImage(
                 modifier = Modifier
                     .fillMaxHeight(0.4f)
                     .fillMaxWidth(1f)
                     .align(Alignment.CenterHorizontally),
-                painter = rememberAsyncImagePainter(imageUri),
+                model = imageUri,
                 contentDescription = null,
             )
         }
