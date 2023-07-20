@@ -6,6 +6,8 @@ This app also uses:
   * Coil to load images asynchronously
 There are 3 available languages and 4 different themes you can try! 
 
+To run this app you would need to create a Firestore and Firebase Storage project(it's free) and download the file google-services.json to the app directory.
+
 Here are some screenshots of the app: 
 
 <img src="https://github.com/MrRuslanYT/KnowUI/assets/104719315/d146b573-55e4-49ef-989f-e0dcb5512e92" width="200" height="400" />
