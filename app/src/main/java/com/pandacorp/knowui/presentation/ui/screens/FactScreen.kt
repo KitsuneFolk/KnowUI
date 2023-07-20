@@ -4,8 +4,6 @@ import android.content.res.Configuration
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -27,6 +25,7 @@ fun FactScreen(
 
     val imageUri = currentFactViewModel.fact.value.imageUri
     val content = currentFactViewModel.fact.value.contentEnglish
+    val tags = currentFactViewModel.fact.value.tags
 
     Scaffold(topBar = {
         BackButtonTopAppBar(R.string.fact) {
@@ -36,13 +35,13 @@ fun FactScreen(
         Column(
             modifier = Modifier
                 .padding(padding)
-                .padding(8.dp)
+                .padding(4.dp)
                 .fillMaxSize()
-                .padding(16.dp)
-                .verticalScroll(rememberScrollState())
+                .padding(8.dp)
         ) {
-            if (isLandscape) CardLandscapeContent(imageUri = imageUri, content = content)
-            else CardPortraitContent(imageUri = imageUri, content = content)
+            if (isLandscape)
+                CardLandscapeContent(imageUri = imageUri, content = content, tags = tags, enableScroll = true)
+            else CardPortraitContent(imageUri = imageUri, content = content, tags = tags, enableScroll = true)
         }
     }
 }

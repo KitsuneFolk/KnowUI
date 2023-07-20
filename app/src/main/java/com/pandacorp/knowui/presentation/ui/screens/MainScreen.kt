@@ -17,7 +17,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Card
@@ -57,6 +59,7 @@ import com.pandacorp.knowui.presentation.viewmodel.CurrentFactViewModel
 import com.pandacorp.knowui.presentation.viewmodel.FactsViewModel
 import com.pandacorp.knowui.utils.Animations
 import com.pandacorp.knowui.utils.Constants
+import com.pandacorp.knowui.utils.formatTags
 import com.pandacorp.knowui.utils.topappbar.FixedTopAppBar
 import com.pandacorp.knowui.utils.topappbar.TopAppBarDefaults
 import com.valentinilk.shimmer.ShimmerBounds
@@ -154,7 +157,8 @@ private fun Pager(
             isPlaceHolder = isShowPlaceholder,
             isReachedEnd = ((pageIndex == facts.size - 1) && !isLoadMore),
             content = factItem.contentEnglish,
-            imageUri = factItem.imageUri
+            imageUri = factItem.imageUri,
+            tags = factItem.tags
         ) {
             onFactClick(facts[pageIndex])
         }
@@ -168,6 +172,7 @@ private fun CardComponent(
     isReachedEnd: Boolean = false,
     imageUri: Uri?,
     content: String,
+    tags: List<String>,
     onClick: () -> Unit = {},
 ) {
     val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
@@ -194,12 +199,14 @@ private fun CardComponent(
                 if (isLandscape) CardLandscapeContent(
                     modifier = Modifier.background(MaterialTheme.colorScheme.surface),
                     imageUri = imageUri,
-                    content = content
+                    content = content,
+                    tags = tags
                 )
                 else CardPortraitContent(
                     modifier = Modifier.background(MaterialTheme.colorScheme.surface),
                     imageUri = imageUri,
-                    content = content
+                    content = content,
+                    tags = tags
                 )
             }
         }
@@ -239,7 +246,13 @@ fun CardPlaceholderContent() {
 }
 
 @Composable
-fun CardLandscapeContent(modifier: Modifier = Modifier, imageUri: Uri?, content: String) {
+fun CardLandscapeContent(
+    modifier: Modifier = Modifier,
+    imageUri: Uri?,
+    content: String,
+    tags: List<String>,
+    enableScroll: Boolean = false,
+) {
     Row(
         modifier = modifier
             .fillMaxSize()
@@ -263,20 +276,38 @@ fun CardLandscapeContent(modifier: Modifier = Modifier, imageUri: Uri?, content:
                 contentDescription = null,
             )
         }
-        Text(
-            modifier = Modifier
-                .padding(start = 12.dp)
-                .weight(1f)
-                .align(Alignment.CenterVertically),
-            text = content,
-            color = Color.White,
-            overflow = TextOverflow.Ellipsis
-        )
+        Column {
+            Text(
+                modifier = Modifier
+                    .padding(start = 12.dp)
+                    .weight(1f)
+                    .then(
+                        if (enableScroll) Modifier.verticalScroll(rememberScrollState()) else Modifier
+                    ),
+                text = content,
+                color = Color.White,
+                overflow = TextOverflow.Ellipsis
+            )
+
+            Text(
+                modifier = Modifier
+                    .padding(horizontal = 12.dp, vertical = 4.dp),
+                text = formatTags(tags = tags),
+                color = Color.White,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
     }
 }
 
 @Composable
-fun CardPortraitContent(modifier: Modifier = Modifier, imageUri: Uri?, content: String) {
+fun CardPortraitContent(
+    modifier: Modifier = Modifier,
+    imageUri: Uri?,
+    content: String,
+    tags: List<String>,
+    enableScroll: Boolean = false,
+) {
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -300,8 +331,20 @@ fun CardPortraitContent(modifier: Modifier = Modifier, imageUri: Uri?, content: 
             )
         }
         Text(
-            modifier = Modifier.padding(top = 6.dp),
+            modifier = Modifier
+                .padding(top = 6.dp)
+                .weight(1f)
+                .then(
+                    if (enableScroll) Modifier.verticalScroll(rememberScrollState()) else Modifier
+                ),
             text = content,
+            color = Color.White,
+            overflow = TextOverflow.Ellipsis
+        )
+
+        Text(
+            modifier = Modifier.padding(top = 6.dp, bottom = 4.dp),
+            text = formatTags(tags = tags),
             color = Color.White,
             overflow = TextOverflow.Ellipsis
         )
