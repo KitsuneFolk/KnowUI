@@ -10,8 +10,8 @@ To run this app you would need to create a Firestore and Firebase Storage projec
 
 Here are some screenshots of the app: 
 
-<img src="https://github.com/MrRuslanYT/KnowUI/assets/104719315/d146b573-55e4-49ef-989f-e0dcb5512e92" width="200" height="400" />
-<img src="https://github.com/MrRuslanYT/KnowUI/assets/104719315/64c2ba11-903e-44a3-aade-6e69b508bebe" width="200" height="400" />
-<img src="https://github.com/MrRuslanYT/KnowUI/assets/104719315/405d842e-acf9-4aee-ba16-dc1f80b3aa0e" width="200" height="400" />
-<img src="https://github.com/MrRuslanYT/KnowUI/assets/104719315/4f9797e3-db25-4cb5-9959-948525a1742d" width="200" height="400" />
-<img src="https://github.com/MrRuslanYT/KnowUI/assets/104719315/531fdb5c-4908-4d67-bcd7-a483cb83013d" width="200" height="400" />
+<img src="https://github.com/MrRuslanYT/KnowUI/assets/104719315/28270dc6-a257-4a7e-b8e3-8a4ba82a2c57" width="200" height="400" />
+<img src="https://github.com/MrRuslanYT/KnowUI/assets/104719315/11d30025-93af-4d91-9cea-92b1c5a275dc" width="200" height="400" />
+<img src="https://github.com/MrRuslanYT/KnowUI/assets/104719315/3d0e715e-1f56-4f80-bdfd-b862969b2b42" width="200" height="400" />
+<img src="https://github.com/MrRuslanYT/KnowUI/assets/104719315/ba5987ef-2201-463f-ad38-868c9a328700" width="200" height="400" />
+<img src="https://github.com/MrRuslanYT/KnowUI/assets/104719315/39af5216-6fff-4c20-96dc-9f94662d5a04" width="200" height="400" />
