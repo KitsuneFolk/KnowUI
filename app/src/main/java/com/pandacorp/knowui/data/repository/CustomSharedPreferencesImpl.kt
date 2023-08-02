@@ -7,7 +7,6 @@ import androidx.lifecycle.LiveData
 import androidx.preference.PreferenceManager
 import com.jintin.preferencesextension.liveData
 import com.pandacorp.knowui.R
-import com.pandacorp.knowui.domain.models.SavedPreferencesItem
 import com.pandacorp.knowui.domain.repository.CustomSharedPreferences
 import com.pandacorp.knowui.utils.Constants
 
@@ -40,21 +39,15 @@ class CustomSharedPreferencesImpl(private val context: Context) : CustomSharedPr
     override fun getLanguageLivedata(): LiveData<String> =
         sharedPreferences.liveData(Constants.Preferences.LANGUAGE_KEY)
 
-    override fun getSavedPreferences(): SavedPreferencesItem {
-        val theme = getTheme()
-        val language = getLanguage()
-
-        return SavedPreferencesItem(
-            theme = theme,
-            language = language
-        )
+    override fun getTheme(): String {
+        val defaultTheme = Constants.Preferences.THEME_DEFAULT
+        return sharedPreferences.getString(Constants.Preferences.THEME_KEY, defaultTheme) ?: defaultTheme
     }
 
-    private fun getTheme() =
-        sharedPreferences.getString(Constants.Preferences.THEME_KEY, Constants.Preferences.THEME_DEFAULT)!!
-
-    private fun getLanguage() =
-        sharedPreferences.getString(Constants.Preferences.LANGUAGE_KEY, getDefaultLanguage())!!
+    override fun getLanguage(): String {
+        val defaultLanguage = getDefaultLanguage()
+        return sharedPreferences.getString(Constants.Preferences.LANGUAGE_KEY, defaultLanguage) ?: defaultLanguage
+    }
 
     private fun getDefaultLanguage() = context.getString(R.string.default_language)
 }

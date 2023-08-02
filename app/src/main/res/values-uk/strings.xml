@@ -1,5 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="signIn">Увійти</string>
+    <string name="signUp">Зареєструватися</string>
+    <string name="skip">Пропустити</string>
+    <string name="email">Електронна Пошта</string>
+    <string name="password">Пароль</string>
+    <string name="emptyPassword">Пароль не може бути порожнім.</string>
+    <string name="shortPassword">Пароль повинен містити принаймні 6 символів.</string>
+    <string name="emptyEmail">Електронна Пошта не може бути порожньою.</string>
+    <string name="invalidEmail">Неправильний формат електронної пошти.</string>
+    <string name="signUpSuggestion">Не маєте аккаунт?</string>
+    <string name="signInSuggestion">Вже є аккаунт?</string>
+
     <string name="settings">Налаштування</string>
     <string name="fact">Факт</string>
     <string name="back_button">Кнопка назад</string>

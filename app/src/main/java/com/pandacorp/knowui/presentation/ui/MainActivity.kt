@@ -10,50 +10,40 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import com.fragula2.compose.FragulaNavHost
 import com.fragula2.compose.rememberFragulaNavController
 import com.fragula2.compose.swipeable
-import com.pandacorp.knowui.R
-import com.pandacorp.knowui.domain.models.SavedPreferencesItem
 import com.pandacorp.knowui.presentation.ui.screens.FactScreen
+import com.pandacorp.knowui.presentation.ui.screens.LoginScreen
 import com.pandacorp.knowui.presentation.ui.screens.MainScreen
 import com.pandacorp.knowui.presentation.ui.screens.SettingsScreen
 import com.pandacorp.knowui.presentation.ui.theme.KnowUITheme
+import com.pandacorp.knowui.presentation.viewmodel.LoginViewModel
 import com.pandacorp.knowui.presentation.viewmodel.PreferencesViewModel
 import com.pandacorp.knowui.utils.Constants
+import org.koin.androidx.compose.koinViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity() {
-    private val preferencesViewModel: PreferencesViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
 
-        val savedPreferences = preferencesViewModel.getSavedPreferences()
-        preferencesViewModel.setLanguage(savedPreferences.language)
+        val preferencesViewModel: PreferencesViewModel by viewModel()
+
+        val language = preferencesViewModel.getLanguage()
+        preferencesViewModel.setLanguage(language)
         super.onCreate(savedInstanceState)
 
         setContent {
-            val defaultLanguage = stringResource(id = R.string.default_language)
-
-            val themeState by preferencesViewModel.themeLiveData.observeAsState(savedPreferences.theme)
-            val languageState by preferencesViewModel.languageLiveData.observeAsState(savedPreferences.language)
-
+            val themeState by preferencesViewModel.themeLiveData.observeAsState(preferencesViewModel.getTheme())
             val theme = themeState.ifEmpty { Constants.Preferences.THEME_DEFAULT }
-            val language = languageState.ifEmpty { defaultLanguage }
 
-            val rememberPreferences = remember(theme, language) {
-                SavedPreferencesItem(theme = theme, language = language)
-            }
-
-            KnowUITheme(theme = rememberPreferences.theme) {
-                MainActivityContent(rememberPreferences)
+            KnowUITheme(theme = theme) {
+                MainActivityContent()
             }
         }
     }
@@ -61,51 +51,53 @@ class MainActivity : AppCompatActivity() {
 
 @Composable
 private fun MainActivityContent(
-    savedPreferences: SavedPreferencesItem = SavedPreferencesItem(
-        "dark",
-        "en"
-    ),
+    loginViewModel: LoginViewModel = koinViewModel(),
+    isSigned: Boolean = loginViewModel.isSigned,
+    isSkippedSign: Boolean = loginViewModel.isSkipped,
 ) {
-    val navController = rememberFragulaNavController()
+    // viewModelStoreOwner to provide shared viewmodel for composable functions
+    val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
+        "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
+    }
 
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
     ) {
-        // viewModelStoreOwner to get a shared CurrentFactViewModel in MainScreen and FactScreen
-        val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
-            "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
-        }
-        FragulaNavHost(
-            navController = navController,
-            startDestination = Constants.Screen.MAIN,
-        ) {
-            swipeable(Constants.Screen.MAIN) {
-                CompositionLocalProvider(
-                    LocalViewModelStoreOwner provides viewModelStoreOwner
-                ) {
-                    MainScreen(navController = navController)
+
+        if (isSigned || isSkippedSign) {
+            val navController = rememberFragulaNavController()
+
+            FragulaNavHost(
+                navController = navController,
+                startDestination = Constants.Screen.MAIN,
+            ) {
+                swipeable(Constants.Screen.MAIN) {
+                    CompositionLocalProvider(
+                        LocalViewModelStoreOwner provides viewModelStoreOwner
+                    ) {
+                        MainScreen(navController = navController)
+                    }
+                }
+                swipeable(Constants.Screen.SETTINGS) {
+                    CompositionLocalProvider(
+                        LocalViewModelStoreOwner provides viewModelStoreOwner
+                    ) {
+                        SettingsScreen(navController = navController)
+                    }
+                }
+                swipeable(Constants.Screen.FACT) {
+                    CompositionLocalProvider(
+                        LocalViewModelStoreOwner provides viewModelStoreOwner
+                    ) {
+                        FactScreen(navController = navController)
+                    }
                 }
             }
-            swipeable(Constants.Screen.SETTINGS) {
-                SettingsScreen(navController = navController, savedPreferences = savedPreferences)
-            }
-
-            swipeable(Constants.Screen.FACT) {
-                CompositionLocalProvider(
-                    LocalViewModelStoreOwner provides viewModelStoreOwner
-                ) {
-                    FactScreen(navController = navController)
-                }
+        } else  {
+            CompositionLocalProvider(LocalViewModelStoreOwner provides viewModelStoreOwner) {
+                LoginScreen()
             }
         }
-    }
-}
-
-@Preview
-@Composable
-private fun MainActivityPreview() {
-    KnowUITheme {
-        MainActivityContent()
     }
 }

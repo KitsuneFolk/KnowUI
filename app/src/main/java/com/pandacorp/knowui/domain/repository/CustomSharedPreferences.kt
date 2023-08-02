@@ -1,10 +1,11 @@
 package com.pandacorp.knowui.domain.repository
 
 import androidx.lifecycle.LiveData
-import com.pandacorp.knowui.domain.models.SavedPreferencesItem
 
 interface CustomSharedPreferences {
-    fun getSavedPreferences(): SavedPreferencesItem
+    fun getTheme(): String
+
+    fun getLanguage(): String
 
     fun getLanguageLivedata(): LiveData<String>
 

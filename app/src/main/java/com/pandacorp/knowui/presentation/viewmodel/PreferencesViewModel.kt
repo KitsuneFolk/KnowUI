@@ -1,7 +1,6 @@
 package com.pandacorp.knowui.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
-import com.pandacorp.knowui.domain.models.SavedPreferencesItem
 import com.pandacorp.knowui.domain.repository.CustomSharedPreferences
 
 class PreferencesViewModel(private val customSharedPreferences: CustomSharedPreferences) : ViewModel() {
@@ -21,6 +20,7 @@ class PreferencesViewModel(private val customSharedPreferences: CustomSharedPref
         customSharedPreferences.writeTheme(theme)
     }
 
-    fun getSavedPreferences(): SavedPreferencesItem = customSharedPreferences.getSavedPreferences()
+    fun getTheme(): String = customSharedPreferences.getTheme()
 
+    fun getLanguage(): String = customSharedPreferences.getLanguage()
 }

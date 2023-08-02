@@ -1,6 +1,18 @@
 <resources>
     <string name="app_name" translatable="false">KnowUI</string>
 
+    <string name="signIn">Sign In</string>
+    <string name="signUp">Sign Up</string>
+    <string name="skip">Skip</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="emptyPassword">Password cannot be empty.</string>
+    <string name="shortPassword">Password must be at least 6 characters long.</string>
+    <string name="emptyEmail">Email cannot be empty.</string>
+    <string name="invalidEmail">Invalid email format.</string>
+    <string name="signUpSuggestion">Don\'t have account?</string>
+    <string name="signInSuggestion">Already have account?</string>
+
     <string name="settings">Settings</string>
     <string name="fact">Fact</string>
     <string name="back_button">Back button</string>
