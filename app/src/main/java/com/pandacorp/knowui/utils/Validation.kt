@@ -1,7 +1,7 @@
 package com.pandacorp.knowui.utils
 
 object Validation {
-    private const val MIN_PASSWORD_LENGTH = 6
+    const val MIN_PASSWORD_LENGTH = 6
 
     fun isValidEmail(email: String): Boolean = email.isNotBlank() && android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
 

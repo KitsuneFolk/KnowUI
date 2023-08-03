@@ -3,6 +3,13 @@ package com.pandacorp.knowui.presentation.ui
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.with
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -24,7 +31,6 @@ import com.pandacorp.knowui.presentation.ui.theme.KnowUITheme
 import com.pandacorp.knowui.presentation.viewmodel.LoginViewModel
 import com.pandacorp.knowui.presentation.viewmodel.PreferencesViewModel
 import com.pandacorp.knowui.utils.Constants
-import org.koin.androidx.compose.koinViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity() {
@@ -33,6 +39,7 @@ class MainActivity : AppCompatActivity() {
         installSplashScreen()
 
         val preferencesViewModel: PreferencesViewModel by viewModel()
+        val loginViewModel: LoginViewModel by viewModel()
 
         val language = preferencesViewModel.getLanguage()
         preferencesViewModel.setLanguage(language)
@@ -43,19 +50,21 @@ class MainActivity : AppCompatActivity() {
             val theme = themeState.ifEmpty { Constants.Preferences.THEME_DEFAULT }
 
             KnowUITheme(theme = theme) {
-                MainActivityContent()
+                MainActivityContent(isShowLoginScreen = !(loginViewModel.isSigned || loginViewModel.isSkipped))
             }
         }
     }
 }
 
+
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 private fun MainActivityContent(
-    loginViewModel: LoginViewModel = koinViewModel(),
-    isSigned: Boolean = loginViewModel.isSigned,
-    isSkippedSign: Boolean = loginViewModel.isSkipped,
+    isShowLoginScreen: Boolean = false,
 ) {
-    // viewModelStoreOwner to provide shared viewmodel for composable functions
+    val navController = rememberFragulaNavController()
+
+    // viewModelStoreOwner to provide shared viewmodels for composable functions
     val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
         "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
     }
@@ -64,39 +73,53 @@ private fun MainActivityContent(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
     ) {
-
-        if (isSigned || isSkippedSign) {
-            val navController = rememberFragulaNavController()
-
-            FragulaNavHost(
-                navController = navController,
-                startDestination = Constants.Screen.MAIN,
-            ) {
-                swipeable(Constants.Screen.MAIN) {
-                    CompositionLocalProvider(
-                        LocalViewModelStoreOwner provides viewModelStoreOwner
-                    ) {
-                        MainScreen(navController = navController)
-                    }
-                }
-                swipeable(Constants.Screen.SETTINGS) {
-                    CompositionLocalProvider(
-                        LocalViewModelStoreOwner provides viewModelStoreOwner
-                    ) {
-                        SettingsScreen(navController = navController)
-                    }
-                }
-                swipeable(Constants.Screen.FACT) {
-                    CompositionLocalProvider(
-                        LocalViewModelStoreOwner provides viewModelStoreOwner
-                    ) {
-                        FactScreen(navController = navController)
-                    }
-                }
+        AnimatedContent(
+            targetState = isShowLoginScreen,
+            label = "LoginScreenTransition",
+            transitionSpec = {
+                slideInHorizontally(
+                    animationSpec = tween(500, easing = LinearEasing),
+                    initialOffsetX = { it }) with
+                        slideOutHorizontally(animationSpec = tween(500, easing = LinearEasing))
             }
-        } else  {
-            CompositionLocalProvider(LocalViewModelStoreOwner provides viewModelStoreOwner) {
-                LoginScreen()
+        ) {
+            when (it) {
+                true -> {
+                    CompositionLocalProvider(LocalViewModelStoreOwner provides viewModelStoreOwner) {
+                        LoginScreen()
+                    }
+                }
+
+                false -> {
+                    FragulaNavHost(
+                        navController = navController,
+                        startDestination = Constants.Screen.MAIN,
+                    ) {
+                        swipeable(Constants.Screen.MAIN) {
+                            CompositionLocalProvider(
+                                LocalViewModelStoreOwner provides viewModelStoreOwner
+                            ) {
+                                MainScreen(navController = navController)
+                            }
+                        }
+
+                        swipeable(Constants.Screen.SETTINGS) {
+                            CompositionLocalProvider(
+                                LocalViewModelStoreOwner provides viewModelStoreOwner
+                            ) {
+                                SettingsScreen(navController = navController)
+                            }
+                        }
+
+                        swipeable(Constants.Screen.FACT) {
+                            CompositionLocalProvider(
+                                LocalViewModelStoreOwner provides viewModelStoreOwner
+                            ) {
+                                FactScreen(navController = navController)
+                            }
+                        }
+                    }
+                }
             }
         }
     }

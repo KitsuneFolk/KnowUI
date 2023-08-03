@@ -10,8 +10,8 @@ import com.pandacorp.knowui.utils.Validation
 
 class LoginViewModel(private val application: Application) : AndroidViewModel(application) {
     var isSigned by mutableStateOf(false)
-    var isSignIn by mutableStateOf(true) // Is SignIn enabled, else SignUp
-    var isSkipped by mutableStateOf(false)
+    var showSignIn by mutableStateOf(true) // Is SignIn enabled, else SignUp
+    var isSkipped by mutableStateOf(isSigned)
     var emailErrorMessage: String? by mutableStateOf(null)
     var email by mutableStateOf("")
     var passwordErrorMessage: String? by mutableStateOf(null)
@@ -21,7 +21,7 @@ class LoginViewModel(private val application: Application) : AndroidViewModel(ap
     fun validatePassword() {
         passwordErrorMessage = when {
             password.isEmpty() -> application.getString(R.string.emptyPassword)
-            password.length < 6 -> application.getString(R.string.shortPassword)
+            password.length < Validation.MIN_PASSWORD_LENGTH -> application.getString(R.string.shortPassword)
             else -> null
         }
     }

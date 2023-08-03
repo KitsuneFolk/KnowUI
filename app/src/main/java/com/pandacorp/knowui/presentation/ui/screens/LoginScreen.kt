@@ -73,7 +73,7 @@ fun LoginScreen(
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
                     .padding(vertical = 14.dp),
-                text = stringResource(if (vm.isSignIn) R.string.signIn else R.string.signUp),
+                text = stringResource(if (vm.showSignIn) R.string.signIn else R.string.signUp),
                 fontSize = 24.sp,
                 color = Color.White
             )
@@ -150,7 +150,7 @@ fun LoginScreen(
                     },
                 ) {
                     Text(
-                        text = stringResource(if (vm.isSignIn) R.string.signIn else R.string.signUp),
+                        text = stringResource(if (vm.showSignIn) R.string.signIn else R.string.signUp),
                         color = Color.White
                     )
                 }
@@ -171,17 +171,17 @@ fun LoginScreen(
             Spacer(modifier = Modifier.weight(1f, true))
 
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(text = stringResource(if (vm.isSignIn) R.string.signUpSuggestion else R.string.signInSuggestion), color = Color.White)
+                Text(text = stringResource(if (vm.showSignIn) R.string.signUpSuggestion else R.string.signInSuggestion), color = Color.White)
 
                 CompositionLocalProvider(LocalRippleTheme provides WhiteRippleTheme()) {
                     TextButton(
                         modifier = Modifier.padding(start = 8.dp, end = 4.dp),
                         onClick = {
-                            vm.isSignIn = !vm.isSignIn
+                            vm.showSignIn = !vm.showSignIn
                         }
                     ) {
                         Text(
-                            text = stringResource(if (vm.isSignIn) R.string.signUp else R.string.signIn),
+                            text = stringResource(if (vm.showSignIn) R.string.signUp else R.string.signIn),
                             color = MaterialTheme.colorScheme.secondary
                         )
                     }
