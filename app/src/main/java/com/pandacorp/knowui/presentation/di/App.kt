@@ -2,13 +2,12 @@ package com.pandacorp.knowui.presentation.di
 
 import android.app.Application
 import com.google.firebase.FirebaseApp
+import com.pandacorp.knowui.presentation.di.modules.SingletonModule
+import com.pandacorp.knowui.presentation.di.modules.ViewModelModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.GlobalContext.startKoin
 
 class App : Application() {
-
-    private var listOfModules = listOf(koinModule)
-
     override fun onCreate() {
         super.onCreate()
         // Throw any uncaught exceptions
@@ -20,7 +19,7 @@ class App : Application() {
 
         startKoin {
             androidContext(this@App)
-            modules(listOfModules)
+            modules(listOf(SingletonModule, ViewModelModule))
         }
 
     }

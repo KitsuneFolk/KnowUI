@@ -27,6 +27,8 @@
     <string name="cancel">Відмінити</string>
 
     <string name="loading">Завантаження…</string>
-    <string name="loading_error">Помилка завантаження даних</string>
     <string name="end_reached">Ви досягли кінця</string>
+
+    <!--  Errors  -->
+    <string name="loading_error">Помилка завантаження даних</string>
 </resources>

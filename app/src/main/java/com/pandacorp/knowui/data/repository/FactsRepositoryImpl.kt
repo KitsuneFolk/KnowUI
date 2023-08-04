@@ -7,8 +7,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.pandacorp.knowui.data.mappers.FactMapper
 import com.pandacorp.knowui.data.models.FactDataItem
-import com.pandacorp.knowui.data.models.FactState
 import com.pandacorp.knowui.domain.models.FactItem
+import com.pandacorp.knowui.domain.models.FactState
 import com.pandacorp.knowui.domain.repository.FactsRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose

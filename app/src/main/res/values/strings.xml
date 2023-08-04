@@ -28,6 +28,8 @@
     <string name="cancel">Cancel</string>
 
     <string name="loading">Loading…</string>
-    <string name="loading_error">Error loading data</string>
     <string name="end_reached">You reached the end</string>
+
+    <!-- Errors   -->
+    <string name="loading_error">Error loading data</string>
 </resources>

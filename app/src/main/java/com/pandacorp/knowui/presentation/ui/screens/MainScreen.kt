@@ -51,7 +51,7 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.google.accompanist.drawablepainter.rememberDrawablePainter
 import com.pandacorp.knowui.R
-import com.pandacorp.knowui.data.models.FactState
+import com.pandacorp.knowui.domain.models.FactState
 import com.pandacorp.knowui.domain.models.FactItem
 import com.pandacorp.knowui.presentation.ui.theme.GrayBorder
 import com.pandacorp.knowui.presentation.ui.theme.KnowUITheme
@@ -98,10 +98,12 @@ fun MainScreen(
                     }
 
                     is FactState.Error -> {
+                        // TODO: Don't hide the Pager if there's an error
                         Snackbar(
                             modifier = Modifier
                                 .padding(bottom = 40.dp, start = 15.dp, end = 15.dp)
-                                .align(Alignment.BottomCenter), containerColor = MaterialTheme.colorScheme.surface
+                                .align(Alignment.BottomCenter),
+                            containerColor = MaterialTheme.colorScheme.surface
                         ) {
                             Text(
                                 text = stringResource(id = R.string.loading_error),

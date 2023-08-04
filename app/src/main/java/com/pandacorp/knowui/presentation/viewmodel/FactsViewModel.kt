@@ -5,7 +5,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.pandacorp.knowui.data.models.FactState
+import com.pandacorp.knowui.domain.models.FactState
 import com.pandacorp.knowui.domain.models.FactItem
 import com.pandacorp.knowui.domain.repository.FactsRepository
 import kotlinx.coroutines.flow.launchIn

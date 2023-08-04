@@ -27,6 +27,8 @@
     <string name="cancel">Отменить</string>
 
     <string name="loading">Загрузка…</string>
-    <string name="loading_error">Ошибка загрузки данных</string>
     <string name="end_reached">Вы достигли конца</string>
+
+    <!--  Errors  -->
+    <string name="loading_error">Ошибка загрузки данных</string>
 </resources>

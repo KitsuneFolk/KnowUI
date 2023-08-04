@@ -19,6 +19,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import com.fragula2.compose.FragulaNavHost
 import com.fragula2.compose.rememberFragulaNavController
@@ -50,17 +51,16 @@ class MainActivity : AppCompatActivity() {
             val theme = themeState.ifEmpty { Constants.Preferences.THEME_DEFAULT }
 
             KnowUITheme(theme = theme) {
-                MainActivityContent(isShowLoginScreen = !(loginViewModel.isSigned || loginViewModel.isSkipped))
+                MainActivityContent(isSigned = loginViewModel.isSigned)
             }
         }
     }
 }
 
-
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 private fun MainActivityContent(
-    isShowLoginScreen: Boolean = false,
+    isSigned: Boolean = true,
 ) {
     val navController = rememberFragulaNavController()
 
@@ -74,7 +74,7 @@ private fun MainActivityContent(
         color = MaterialTheme.colorScheme.background
     ) {
         AnimatedContent(
-            targetState = isShowLoginScreen,
+            targetState = isSigned,
             label = "LoginScreenTransition",
             transitionSpec = {
                 slideInHorizontally(
@@ -85,42 +85,43 @@ private fun MainActivityContent(
         ) {
             when (it) {
                 true -> {
-                    CompositionLocalProvider(LocalViewModelStoreOwner provides viewModelStoreOwner) {
-                        LoginScreen()
-                    }
-                }
-
-                false -> {
                     FragulaNavHost(
                         navController = navController,
                         startDestination = Constants.Screen.MAIN,
                     ) {
                         swipeable(Constants.Screen.MAIN) {
-                            CompositionLocalProvider(
-                                LocalViewModelStoreOwner provides viewModelStoreOwner
-                            ) {
+                            ProvideViewModelStoreOwnerContent(viewModelStoreOwner) {
                                 MainScreen(navController = navController)
                             }
                         }
 
                         swipeable(Constants.Screen.SETTINGS) {
-                            CompositionLocalProvider(
-                                LocalViewModelStoreOwner provides viewModelStoreOwner
-                            ) {
+                            ProvideViewModelStoreOwnerContent(viewModelStoreOwner) {
                                 SettingsScreen(navController = navController)
                             }
                         }
 
                         swipeable(Constants.Screen.FACT) {
-                            CompositionLocalProvider(
-                                LocalViewModelStoreOwner provides viewModelStoreOwner
-                            ) {
+                            ProvideViewModelStoreOwnerContent(viewModelStoreOwner) {
                                 FactScreen(navController = navController)
                             }
                         }
                     }
                 }
+
+                false -> {
+                    ProvideViewModelStoreOwnerContent(viewModelStoreOwner) {
+                        LoginScreen()
+                    }
+                }
             }
         }
+    }
+}
+
+@Composable
+private fun ProvideViewModelStoreOwnerContent(viewModelStoreOwner: ViewModelStoreOwner, content: @Composable () -> Unit) {
+    CompositionLocalProvider(LocalViewModelStoreOwner provides viewModelStoreOwner) {
+        content()
     }
 }
