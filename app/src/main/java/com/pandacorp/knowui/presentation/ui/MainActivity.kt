@@ -10,7 +10,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.with
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -86,28 +85,25 @@ private fun MainActivityContent(
         ) {
             when (it) {
                 true -> {
-                    Box {
-
-                        FragulaNavHost(
-                            navController = navController,
-                            startDestination = Constants.Screen.MAIN,
-                        ) {
-                            swipeable(Constants.Screen.MAIN) {
-                                ProvideViewModelStoreOwnerContent(viewModelStoreOwner) {
-                                    MainScreen(navController = navController)
-                                }
+                    FragulaNavHost(
+                        navController = navController,
+                        startDestination = Constants.Screen.MAIN,
+                    ) {
+                        swipeable(Constants.Screen.MAIN) {
+                            ProvideViewModelStoreOwnerContent(viewModelStoreOwner) {
+                                MainScreen(navController = navController)
                             }
+                        }
 
-                            swipeable(Constants.Screen.SETTINGS) {
-                                ProvideViewModelStoreOwnerContent(viewModelStoreOwner) {
-                                    SettingsScreen(navController = navController)
-                                }
+                        swipeable(Constants.Screen.SETTINGS) {
+                            ProvideViewModelStoreOwnerContent(viewModelStoreOwner) {
+                                SettingsScreen(navController = navController)
                             }
+                        }
 
-                            swipeable(Constants.Screen.FACT) {
-                                ProvideViewModelStoreOwnerContent(viewModelStoreOwner) {
-                                    FactScreen(navController = navController)
-                                }
+                        swipeable(Constants.Screen.FACT) {
+                            ProvideViewModelStoreOwnerContent(viewModelStoreOwner) {
+                                FactScreen(navController = navController)
                             }
                         }
                     }

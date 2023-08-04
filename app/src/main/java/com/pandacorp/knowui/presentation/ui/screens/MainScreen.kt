@@ -51,8 +51,8 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.google.accompanist.drawablepainter.rememberDrawablePainter
 import com.pandacorp.knowui.R
-import com.pandacorp.knowui.domain.models.FactState
 import com.pandacorp.knowui.domain.models.FactItem
+import com.pandacorp.knowui.domain.models.FactState
 import com.pandacorp.knowui.presentation.ui.theme.GrayBorder
 import com.pandacorp.knowui.presentation.ui.theme.KnowUITheme
 import com.pandacorp.knowui.presentation.viewmodel.CurrentFactViewModel
@@ -87,18 +87,18 @@ fun MainScreen(
                     .padding(padding)
                     .fillMaxSize()
             ) {
-                when (val facts = factsViewModel.facts.value) {
-                    is FactState.Success -> {
-                        Pager(items = facts.data!!, isLoadMore = factsViewModel.isStopLoading.value, onLoadMore = {
-                            factsViewModel.loadMoreFacts()
-                        }, onFactClick = { fact ->
-                            currentFactViewModel.setFact(fact)
-                            navController!!.navigate(Constants.Screen.FACT)
-                        })
-                    }
+                val facts = factsViewModel.facts.value
 
-                    is FactState.Error -> {
-                        // TODO: Don't hide the Pager if there's an error
+                if(facts is FactState.Loading) {
+                    Pager(items = listOf(), isShowPlaceholder = true)
+                } else {
+                    Pager(items = facts.data ?: emptyList(), isLoadMore = factsViewModel.isStopLoading.value, onLoadMore = {
+                        factsViewModel.loadMoreFacts()
+                    }, onFactClick = { fact ->
+                        currentFactViewModel.setFact(fact)
+                        navController!!.navigate(Constants.Screen.FACT)
+                    })
+                    if (facts is FactState.Error) {
                         Snackbar(
                             modifier = Modifier
                                 .padding(bottom = 40.dp, start = 15.dp, end = 15.dp)
@@ -110,10 +110,6 @@ fun MainScreen(
                                 color = Color.White
                             )
                         }
-                    }
-
-                    is FactState.Loading -> {
-                        Pager(items = listOf(), isShowPlaceholder = true)
                     }
                 }
             }
