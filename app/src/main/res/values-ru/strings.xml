@@ -2,6 +2,7 @@
 <resources>
     <string name="signIn">Войти</string>
     <string name="signUp">Зарегистрироваться</string>
+    <string name="signOut">Выйти из аккаунта</string>
     <string name="skip">Пропустить</string>
     <string name="email">Электронная Почта</string>
     <string name="password">Пароль</string>

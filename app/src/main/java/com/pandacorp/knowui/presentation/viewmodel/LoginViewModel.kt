@@ -37,8 +37,8 @@ class LoginViewModel(private val application: Application, private val authRepos
         }
     }
 
-    fun signInAnonymously(onResult: (AuthState) -> Unit) {
-        authRepository.signInAnonymously(onResult)
+    fun signInAnonymously() {
+        authRepository.signInAnonymously()
     }
 
     fun signIn(onResult: (AuthState) -> Unit) {
@@ -59,5 +59,8 @@ class LoginViewModel(private val application: Application, private val authRepos
 
     fun signOut() {
         authRepository.signOut()
+        isSigned = false
     }
+
+    fun isSignedAnonymously() = authRepository.isSignedAnonymously()
 }

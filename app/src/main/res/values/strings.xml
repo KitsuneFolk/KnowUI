@@ -3,6 +3,7 @@
 
     <string name="signIn">Sign In</string>
     <string name="signUp">Sign Up</string>
+    <string name="signOut">Sign out of account</string>
     <string name="skip">Skip</string>
     <string name="email">Email</string>
     <string name="password">Password</string>

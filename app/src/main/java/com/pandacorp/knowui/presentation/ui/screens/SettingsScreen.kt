@@ -2,7 +2,6 @@ package com.pandacorp.knowui.presentation.ui.screens
 
 import android.content.Context
 import android.content.res.Configuration
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -16,6 +15,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.ripple.LocalRippleTheme
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -35,6 +35,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
@@ -52,6 +53,7 @@ import com.pandacorp.knowui.presentation.ui.dialogs.SettingsDialog
 import com.pandacorp.knowui.presentation.ui.theme.GrayBorder
 import com.pandacorp.knowui.presentation.ui.theme.KnowUITheme
 import com.pandacorp.knowui.presentation.ui.theme.WhiteRippleTheme
+import com.pandacorp.knowui.presentation.viewmodel.LoginViewModel
 import com.pandacorp.knowui.presentation.viewmodel.PreferencesViewModel
 import com.pandacorp.knowui.utils.Constants
 import com.pandacorp.knowui.utils.getAppVersion
@@ -63,12 +65,14 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun SettingsScreen(
     navController: NavController? = null,
-    preferencesViewModel: PreferencesViewModel = koinViewModel()
+    preferencesViewModel: PreferencesViewModel = koinViewModel(),
+    loginViewModel: LoginViewModel = koinViewModel(),
 ) {
     val defaultTheme = Constants.Preferences.THEME_DEFAULT
     val defaultLanguage = stringResource(id = R.string.default_language)
     val theme = preferencesViewModel.themeLiveData.observeAsState().value?.ifEmpty { defaultTheme } ?: defaultTheme
-    val language = preferencesViewModel.languageLiveData.observeAsState().value?.ifEmpty { defaultLanguage } ?: defaultLanguage
+    val language = preferencesViewModel.languageLiveData.observeAsState().value?.ifEmpty { defaultLanguage }
+        ?: defaultLanguage
 
     val context = LocalContext.current
 
@@ -157,12 +161,6 @@ fun SettingsScreen(
                     style = TextStyle(fontWeight = FontWeight.Bold)
                 )
 
-                // Retrieve the version from build.gradle
-                val version = if (LocalInspectionMode.current)
-                // Return a placeholder value for the preview mode
-                    "1.0.0-preview"
-                else LocalContext.current.getAppVersion()
-
                 Card(
                     modifier = Modifier
                         .padding(horizontal = 20.dp)
@@ -173,6 +171,30 @@ fun SettingsScreen(
                         containerColor = MaterialTheme.colorScheme.primary,
                     ),
                 ) {
+                    val isSignedAnonymously = loginViewModel.isSignedAnonymously()
+                    CardComponent(
+                        imageVector = Icons.Default.Logout,
+                        /* Sign In if skipped and Sign Out if the user got account */
+                        text = if(isSignedAnonymously) stringResource(R.string.signIn) else stringResource(R.string.signOut),
+                    ) {
+                        loginViewModel.signOut()
+                    }
+                }
+
+                Card(
+                    modifier = Modifier
+                        .padding(top = 8.dp)
+                        .padding(horizontal = 20.dp)
+                        .fillMaxWidth()
+                        .padding(top = 8.dp),
+                    border = GrayBorder,
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                    ),
+                ) {
+                    // Retrieve the version from build.gradle
+                    val version = if (LocalInspectionMode.current) "1.0.0-preview" /* Placeholder for preview */
+                    else LocalContext.current.getAppVersion()
                     CardComponent(
                         drawable = R.drawable.ic_version,
                         text = stringResource(R.string.version, version)
@@ -186,10 +208,11 @@ fun SettingsScreen(
 @Composable
 private fun CardComponent(
     modifier: Modifier = Modifier,
-    drawable: Int,
-    text: String,
+    drawable: Int? = null,
+    imageVector: ImageVector? = null,
+    text: String = "",
     value: String? = null,
-    onClick: () -> Unit = {}
+    onClick: () -> Unit = {},
 ) {
     CompositionLocalProvider(LocalRippleTheme provides WhiteRippleTheme()) {
         Row(
@@ -200,14 +223,26 @@ private fun CardComponent(
                 .padding(start = 4.dp, end = 4.dp, bottom = 8.dp, top = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Image(
-                painter = painterResource(drawable),
-                contentDescription = null,
-                modifier = Modifier
-                    .padding(end = 8.dp)
-                    .size(24.dp),
-            )
-            @Suppress("DEPRECATION") /* includeFontPadding is set to true by default, but not it is deprecated but still used by Text, so set it to false to remove the wrong padding */
+            if (drawable != null) {
+                Icon(
+                    painter = painterResource(id = drawable),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .padding(end = 8.dp)
+                        .size(24.dp),
+                    tint = Color.White
+                )
+            } else if (imageVector != null) {
+                Icon(
+                    imageVector = imageVector,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .padding(end = 8.dp)
+                        .size(24.dp),
+                    tint = Color.White
+                )
+            }
+            @Suppress("DEPRECATION") /* includeFontPadding is set to true by default, ignore deprecation as the value is true by default */
             Column {
                 Text(
                     text = text,

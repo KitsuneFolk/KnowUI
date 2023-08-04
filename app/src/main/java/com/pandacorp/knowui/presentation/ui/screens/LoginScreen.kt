@@ -215,9 +215,8 @@ fun LoginScreen(
                             .fillMaxWidth()
                             .padding(horizontal = 8.dp),
                         onClick = {
-                            vm.signInAnonymously {
-                                vm.isSigned = false
-                            }
+                            vm.signInAnonymously()
+                            vm.isSigned = true
                         },
                     ) {
                         Text(stringResource(id = R.string.skip), color = Color.White)

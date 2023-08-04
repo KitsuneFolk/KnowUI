@@ -7,12 +7,10 @@ import com.pandacorp.knowui.domain.repository.AuthRepository
 class AuthRepositoryImpl(private val auth: FirebaseAuth) : AuthRepository {
     override fun isSigned(): Boolean = auth.currentUser != null
 
-    override fun signInAnonymously(onResult: (AuthState) -> Unit) {
-        auth.signInAnonymously().addOnCompleteListener {
-            if (it.isSuccessful) {
-                onResult(AuthState.Success())
-            } else onResult(AuthState.Error(it.exception?.localizedMessage ?: it.exception?.message))
-        }
+    override fun isSignedAnonymously(): Boolean = auth.currentUser?.isAnonymous ?: true
+
+    override fun signInAnonymously() {
+        auth.signInAnonymously()
     }
 
     override fun signIn(email: String, password: String, onResult: (AuthState) -> Unit) {
@@ -32,4 +30,5 @@ class AuthRepositoryImpl(private val auth: FirebaseAuth) : AuthRepository {
     override fun signOut() {
         auth.signOut()
     }
+
 }
