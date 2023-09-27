@@ -4,4 +4,6 @@
     <color name="DarkTheme_colorBackground">#141414</color>
     <color name="PurpleTheme_colorBackground">#9966CC</color>
     <color name="RedTheme_colorBackground">#DC3232</color>
+
+    <color name="ic_launcher_background">#3F48CC</color>
 </resources>

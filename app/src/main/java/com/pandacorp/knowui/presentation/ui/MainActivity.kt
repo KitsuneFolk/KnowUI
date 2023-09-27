@@ -4,12 +4,11 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.animation.with
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -24,6 +23,7 @@ import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import com.fragula2.compose.FragulaNavHost
 import com.fragula2.compose.rememberFragulaNavController
 import com.fragula2.compose.swipeable
+import com.pandacorp.knowui.R
 import com.pandacorp.knowui.presentation.ui.screens.FactScreen
 import com.pandacorp.knowui.presentation.ui.screens.LoginScreen
 import com.pandacorp.knowui.presentation.ui.screens.MainScreen
@@ -46,6 +46,7 @@ class MainActivity : AppCompatActivity() {
         preferencesViewModel.setLanguage(language)
         super.onCreate(savedInstanceState)
 
+        setTheme(R.style.AppCompat) // Set an AppCompat theme before calling setContent, because SplashTheme doesn't inherit it
         setContent {
             val themeState by preferencesViewModel.themeLiveData.observeAsState(preferencesViewModel.getTheme())
             val theme = themeState.ifEmpty { Constants.Preferences.THEME_DEFAULT }
@@ -57,7 +58,6 @@ class MainActivity : AppCompatActivity() {
     }
 }
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 private fun MainActivityContent(
     isSigned: Boolean = true,
@@ -79,7 +79,7 @@ private fun MainActivityContent(
             transitionSpec = {
                 slideInHorizontally(
                     animationSpec = tween(500, easing = LinearEasing),
-                    initialOffsetX = { it }) with
+                    initialOffsetX = { it }) togetherWith
                         slideOutHorizontally(animationSpec = tween(500, easing = LinearEasing))
             }
         ) {
