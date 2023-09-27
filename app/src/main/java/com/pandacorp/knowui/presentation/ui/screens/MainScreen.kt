@@ -129,9 +129,14 @@ private fun Pager(
     onLoadMore: () -> Unit = {},
     onFactClick: (fact: FactItem) -> Unit = {},
 ) {
-    val pagerState = rememberPagerState()
-
-    val facts: List<FactItem> = if (isShowPlaceholder) {
+    var facts: List<FactItem> = emptyList()
+    val pagerState = rememberPagerState(
+        initialPage = 0,
+        initialPageOffsetFraction = 0f
+    ) {
+        return@rememberPagerState facts.size
+    }
+    facts = if (isShowPlaceholder) {
         val placeholderFact = FactItem()
         List(5) { placeholderFact }
     } else {
@@ -147,21 +152,21 @@ private fun Pager(
     }
 
     VerticalPager(
-        pageCount = facts.size,
         modifier = Modifier.fillMaxHeight(),
         state = pagerState,
-    ) { pageIndex ->
-        val factItem = facts[pageIndex]
-        CardComponent(
-            isPlaceHolder = isShowPlaceholder,
-            isReachedEnd = ((pageIndex == facts.size - 1) && !isLoadMore),
-            content = factItem.contentEnglish,
-            imageUri = factItem.imageUri,
-            tags = factItem.tags
-        ) {
-            onFactClick(facts[pageIndex])
+        pageContent = { pageIndex ->
+            val factItem = facts[pageIndex]
+            CardComponent(
+                isPlaceHolder = isShowPlaceholder,
+                isReachedEnd = ((pageIndex == facts.size - 1) && !isLoadMore),
+                content = factItem.contentEnglish,
+                imageUri = factItem.imageUri,
+                tags = factItem.tags
+            ) {
+                onFactClick(facts[pageIndex])
+            }
         }
-    }
+    )
 }
 
 @Composable
