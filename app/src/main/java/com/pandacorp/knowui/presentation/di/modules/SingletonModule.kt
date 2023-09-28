@@ -13,12 +13,13 @@ import com.pandacorp.knowui.domain.repository.FactsRepository
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
-val SingletonModule = module {
-    singleOf(::FactMapper)
-    single { FirebaseFirestore.getInstance() }
-    single { FirebaseStorage.getInstance() }
-    single { FirebaseAuth.getInstance() }
-    single<CustomSharedPreferences> { CustomSharedPreferencesImpl(get()) }
-    single<FactsRepository> { FactsRepositoryImpl(get(), get(), get()) }
-    single<AuthRepository> { AuthRepositoryImpl(get()) }
-}
+val SingletonModule =
+    module {
+        singleOf(::FactMapper)
+        single { FirebaseFirestore.getInstance() }
+        single { FirebaseStorage.getInstance() }
+        single { FirebaseAuth.getInstance() }
+        single<CustomSharedPreferences> { CustomSharedPreferencesImpl(get()) }
+        single<FactsRepository> { FactsRepositoryImpl(get(), get(), get()) }
+        single<AuthRepository> { AuthRepositoryImpl(get()) }
+    }

@@ -13,7 +13,10 @@ import androidx.compose.ui.unit.Dp
  * overlay corresponding to [elevation] applied. The overlay will only be applied to
  * [ColorScheme.surface].
  */
-internal fun ColorScheme.applyTonalElevation(backgroundColor: Color, elevation: Dp): Color {
+internal fun ColorScheme.applyTonalElevation(
+    backgroundColor: Color,
+    elevation: Dp
+): Color {
     return if (backgroundColor == surface) {
         surfaceColorAtElevation(elevation)
     } else {

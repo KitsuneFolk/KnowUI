@@ -20,13 +20,13 @@ class WhiteRippleTheme : RippleTheme {
     override fun defaultColor() =
         RippleTheme.defaultRippleColor(
             color,
-            lightTheme = false
+            lightTheme = false,
         )
 
     @Composable
     override fun rippleAlpha(): RippleAlpha =
         RippleTheme.defaultRippleAlpha(
             color,
-            lightTheme = false
+            lightTheme = false,
         )
 }

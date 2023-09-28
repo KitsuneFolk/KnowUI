@@ -33,15 +33,18 @@ fun FactScreen(
         }
     }) { padding ->
         Column(
-            modifier = Modifier
-                .padding(padding)
-                .padding(4.dp)
-                .fillMaxSize()
-                .padding(8.dp)
+            modifier =
+                Modifier
+                    .padding(padding)
+                    .padding(4.dp)
+                    .fillMaxSize()
+                    .padding(8.dp),
         ) {
-            if (isLandscape)
+            if (isLandscape) {
                 CardLandscapeContent(imageUri = imageUri, content = content, tags = tags, enableScroll = true)
-            else CardPortraitContent(imageUri = imageUri, content = content, tags = tags, enableScroll = true)
+            } else {
+                CardPortraitContent(imageUri = imageUri, content = content, tags = tags, enableScroll = true)
+            }
         }
     }
 }

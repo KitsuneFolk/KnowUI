@@ -10,27 +10,32 @@ import androidx.compose.ui.unit.dp
 import com.valentinilk.shimmer.ShimmerTheme
 
 object Animations {
-    val ShimmerTheme = ShimmerTheme(
-        animationSpec = infiniteRepeatable(
-            animation = tween(
-                1000,
-                easing = LinearEasing,
-                delayMillis = 1000,
-            ),
-            repeatMode = RepeatMode.Restart,
-        ),
-        blendMode = BlendMode.DstIn,
-        rotation = 15.0f,
-        shaderColors = listOf(
-            Color.Unspecified.copy(alpha = 0.25f),
-            Color.Unspecified.copy(alpha = 1.00f),
-            Color.Unspecified.copy(alpha = 0.25f),
-        ),
-        shaderColorStops = listOf(
-            0.0f,
-            0.5f,
-            1.0f,
-        ),
-        shimmerWidth = 400.dp,
-    )
+    val ShimmerTheme =
+        ShimmerTheme(
+            animationSpec =
+                infiniteRepeatable(
+                    animation =
+                        tween(
+                            1000,
+                            easing = LinearEasing,
+                            delayMillis = 1000,
+                        ),
+                    repeatMode = RepeatMode.Restart,
+                ),
+            blendMode = BlendMode.DstIn,
+            rotation = 15.0f,
+            shaderColors =
+                listOf(
+                    Color.Unspecified.copy(alpha = 0.25f),
+                    Color.Unspecified.copy(alpha = 1.00f),
+                    Color.Unspecified.copy(alpha = 0.25f),
+                ),
+            shaderColorStops =
+                listOf(
+                    0.0f,
+                    0.5f,
+                    1.0f,
+                ),
+            shimmerWidth = 400.dp,
+        )
 }

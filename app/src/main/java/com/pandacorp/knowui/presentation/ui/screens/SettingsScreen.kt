@@ -71,8 +71,9 @@ fun SettingsScreen(
     val defaultTheme = Constants.Preferences.THEME_DEFAULT
     val defaultLanguage = stringResource(id = R.string.default_language)
     val theme = preferencesViewModel.themeLiveData.observeAsState().value?.ifEmpty { defaultTheme } ?: defaultTheme
-    val language = preferencesViewModel.languageLiveData.observeAsState().value?.ifEmpty { defaultLanguage }
-        ?: defaultLanguage
+    val language =
+        preferencesViewModel.languageLiveData.observeAsState().value?.ifEmpty { defaultLanguage }
+            ?: defaultLanguage
 
     val context = LocalContext.current
 
@@ -85,9 +86,11 @@ fun SettingsScreen(
                 onValueAppliedListener = {
                     openedDialog = null
                     preferencesViewModel.changeTheme(it)
-                }, onDismiss = {
+                },
+                onDismiss = {
                     openedDialog = null
-                })
+                },
+            )
 
         Constants.Preferences.LANGUAGE_KEY ->
             SettingsDialog(
@@ -95,9 +98,11 @@ fun SettingsScreen(
                 onValueAppliedListener = {
                     openedDialog = null
                     preferencesViewModel.changeLanguage(it)
-                }, onDismiss = {
+                },
+                onDismiss = {
                     openedDialog = null
-                })
+                },
+            )
 
         null -> Unit
     }
@@ -110,27 +115,30 @@ fun SettingsScreen(
         // Use inside of a Box to apply the padding right
         Box(modifier = Modifier.padding(padding)) {
             Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.background)
-                    .verticalScroll(rememberScrollState())
-                    .padding(bottom = 60.dp)
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.background)
+                        .verticalScroll(rememberScrollState())
+                        .padding(bottom = 60.dp),
             ) {
                 Text(
                     text = stringResource(R.string.appearance),
                     modifier = Modifier.padding(start = 24.dp, top = 20.dp),
-                    style = TextStyle(fontWeight = FontWeight.Bold)
+                    style = TextStyle(fontWeight = FontWeight.Bold),
                 )
 
                 Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 20.dp)
-                        .padding(top = 8.dp),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 20.dp)
+                            .padding(top = 8.dp),
                     border = GrayBorder,
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                    )
+                    colors =
+                        CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.primary,
+                        ),
                 ) {
                     Column {
                         CardComponent(
@@ -139,7 +147,7 @@ fun SettingsScreen(
                             value = getThemeTitle(context, theme),
                             onClick = {
                                 openedDialog = Constants.Preferences.THEME_KEY
-                            }
+                            },
                         )
 
                         CardComponent(
@@ -148,56 +156,65 @@ fun SettingsScreen(
                             value = getLanguageTitle(context, language),
                             onClick = {
                                 openedDialog = Constants.Preferences.LANGUAGE_KEY
-                            }
+                            },
                         )
                     }
                 }
 
                 Text(
                     text = stringResource(R.string.another),
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(start = 24.dp, top = 20.dp),
-                    style = TextStyle(fontWeight = FontWeight.Bold)
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .padding(start = 24.dp, top = 20.dp),
+                    style = TextStyle(fontWeight = FontWeight.Bold),
                 )
 
                 Card(
-                    modifier = Modifier
-                        .padding(horizontal = 20.dp)
-                        .fillMaxWidth()
-                        .padding(top = 8.dp),
+                    modifier =
+                        Modifier
+                            .padding(horizontal = 20.dp)
+                            .fillMaxWidth()
+                            .padding(top = 8.dp),
                     border = GrayBorder,
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                    ),
+                    colors =
+                        CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.primary,
+                        ),
                 ) {
                     val isSignedAnonymously = loginViewModel.isSignedAnonymously()
                     CardComponent(
                         imageVector = Icons.Default.Logout,
-                        /* Sign In if skipped and Sign Out if the user got account */
-                        text = if(isSignedAnonymously) stringResource(R.string.signIn) else stringResource(R.string.signOut),
+                        // Sign In if skipped and Sign Out if the user got account
+                        text = if (isSignedAnonymously) stringResource(R.string.signIn) else stringResource(R.string.signOut),
                     ) {
                         loginViewModel.signOut()
                     }
                 }
 
                 Card(
-                    modifier = Modifier
-                        .padding(top = 8.dp)
-                        .padding(horizontal = 20.dp)
-                        .fillMaxWidth()
-                        .padding(top = 8.dp),
+                    modifier =
+                        Modifier
+                            .padding(top = 8.dp)
+                            .padding(horizontal = 20.dp)
+                            .fillMaxWidth()
+                            .padding(top = 8.dp),
                     border = GrayBorder,
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                    ),
+                    colors =
+                        CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.primary,
+                        ),
                 ) {
                     // Retrieve the version from build.gradle
-                    val version = if (LocalInspectionMode.current) "1.0.0-preview" /* Placeholder for preview */
-                    else LocalContext.current.getAppVersion()
+                    val version =
+                        if (LocalInspectionMode.current) {
+                            "1.0.0-preview" // Placeholder for preview
+                        } else {
+                            LocalContext.current.getAppVersion()
+                        }
                     CardComponent(
                         drawable = R.drawable.ic_version,
-                        text = stringResource(R.string.version, version)
+                        text = stringResource(R.string.version, version),
                     )
                 }
             }
@@ -216,51 +233,56 @@ private fun CardComponent(
 ) {
     CompositionLocalProvider(LocalRippleTheme provides WhiteRippleTheme()) {
         Row(
-            modifier = modifier
-                .clickable(onClick = onClick)
-                .fillMaxSize()
-                .padding(horizontal = 12.dp, vertical = 8.dp)
-                .padding(start = 4.dp, end = 4.dp, bottom = 8.dp, top = 8.dp),
-            verticalAlignment = Alignment.CenterVertically
+            modifier =
+                modifier
+                    .clickable(onClick = onClick)
+                    .fillMaxSize()
+                    .padding(horizontal = 12.dp, vertical = 8.dp)
+                    .padding(start = 4.dp, end = 4.dp, bottom = 8.dp, top = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             if (drawable != null) {
                 Icon(
                     painter = painterResource(id = drawable),
                     contentDescription = null,
-                    modifier = Modifier
-                        .padding(end = 8.dp)
-                        .size(24.dp),
-                    tint = Color.White
+                    modifier =
+                        Modifier
+                            .padding(end = 8.dp)
+                            .size(24.dp),
+                    tint = Color.White,
                 )
             } else if (imageVector != null) {
                 Icon(
                     imageVector = imageVector,
                     contentDescription = null,
-                    modifier = Modifier
-                        .padding(end = 8.dp)
-                        .size(24.dp),
-                    tint = Color.White
+                    modifier =
+                        Modifier
+                            .padding(end = 8.dp)
+                            .size(24.dp),
+                    tint = Color.White,
                 )
             }
-            @Suppress("DEPRECATION") /* includeFontPadding is set to true by default, ignore deprecation as the value is true by default */
+            @Suppress("DEPRECATION") // includeFontPadding is set to true by default, ignore deprecation as the value is true by default
             Column {
                 Text(
                     text = text,
-                    style = TextStyle(
-                        fontSize = 16.sp,
-                        platformStyle = PlatformTextStyle(includeFontPadding = false)
-                    ),
+                    style =
+                        TextStyle(
+                            fontSize = 16.sp,
+                            platformStyle = PlatformTextStyle(includeFontPadding = false),
+                        ),
                     color = Color.White,
                 )
                 if (value != null) {
                     Text(
                         modifier = Modifier.padding(top = 4.dp),
                         text = value,
-                        style = TextStyle(
-                            fontSize = 14.sp,
-                            platformStyle = PlatformTextStyle(includeFontPadding = false),
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
-                        )
+                        style =
+                            TextStyle(
+                                fontSize = 14.sp,
+                                platformStyle = PlatformTextStyle(includeFontPadding = false),
+                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
+                            ),
                     )
                 }
             }
@@ -268,10 +290,12 @@ private fun CardComponent(
     }
 }
 
-
 @ExperimentalMaterial3Api
 @Composable
-fun BackButtonTopAppBar(title: Int = 0, onClick: () -> Unit = {}) {
+fun BackButtonTopAppBar(
+    title: Int = 0,
+    onClick: () -> Unit = {}
+) {
     FixedTopAppBar(
         title = {
             Text(text = stringResource(id = title))
@@ -281,7 +305,7 @@ fun BackButtonTopAppBar(title: Int = 0, onClick: () -> Unit = {}) {
             IconButton(onClick = onClick) {
                 Icon(Icons.Default.ArrowBack, contentDescription = stringResource(id = R.string.back_button))
             }
-        }
+        },
     )
 }
 
@@ -293,12 +317,22 @@ private fun SettingsScreenPreview() {
     }
 }
 
-private fun getThemeTitle(context: Context, key: String): String =
+private fun getThemeTitle(
+    context: Context,
+    key: String
+): String =
     context.resources.getStringArray(R.array.Themes)
-        .toList()[CustomSharedPreferencesImpl.getThemesKeys(context)
-        .indexOf(key)]
+        .toList()[
+        CustomSharedPreferencesImpl.getThemesKeys(context)
+            .indexOf(key),
+    ]
 
-private fun getLanguageTitle(context: Context, key: String): String =
+private fun getLanguageTitle(
+    context: Context,
+    key: String
+): String =
     context.resources.getStringArray(R.array.Languages)
-        .toList()[CustomSharedPreferencesImpl.getLanguagesKeys(context)
-        .indexOf(key)]
+        .toList()[
+        CustomSharedPreferencesImpl.getLanguagesKeys(context)
+            .indexOf(key),
+    ]

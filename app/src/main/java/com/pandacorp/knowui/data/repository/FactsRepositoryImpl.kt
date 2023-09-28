@@ -22,72 +22,83 @@ class FactsRepositoryImpl(
     private val storage: FirebaseStorage,
     private val mapper: FactMapper,
 ) : FactsRepository {
-
     private var lastVisible: DocumentSnapshot? = null
-    private val baseQuery = fireStore.collection("Facts")
-        .orderBy(FieldPath.documentId()) // Order by id
+    private val baseQuery =
+        fireStore.collection("Facts")
+            .orderBy(FieldPath.documentId()) // Order by id
 
-    override fun getFacts(limit: Long): Flow<FactState> = callbackFlow {
-        baseQuery.limit(limit)
+    override fun getFacts(limit: Long): Flow<FactState> =
+        callbackFlow {
+            baseQuery.limit(limit)
 
-        val snapshotListener = baseQuery.addSnapshotListener { snapshot, exception ->
-            val response = if (exception == null) {
-                snapshot?.let { querySnapshot ->
-                    val list: List<FactDataItem> = querySnapshot.toObjects(FactDataItem::class.java)
-                    val mappedList = mapper.listToFactItem(list)
+            val snapshotListener =
+                baseQuery.addSnapshotListener { snapshot, exception ->
+                    val response =
+                        if (exception == null) {
+                            snapshot?.let { querySnapshot ->
+                                val list: List<FactDataItem> = querySnapshot.toObjects(FactDataItem::class.java)
+                                val mappedList = mapper.listToFactItem(list)
 
-                    lastVisible = querySnapshot.documents.lastOrNull()
+                                lastVisible = querySnapshot.documents.lastOrNull()
 
-                    FactState.Success(mappedList)
-                } ?: FactState.Error("Empty list")
-            } else FactState.Error(exception.message ?: "Unknown error")
+                                FactState.Success(mappedList)
+                            } ?: FactState.Error("Empty list")
+                        } else {
+                            FactState.Error(exception.message ?: "Unknown error")
+                        }
 
-            trySend(response).isSuccess
-        }
-
-        awaitClose {
-            snapshotListener.remove()
-            close()
-        }
-    }
-
-    override fun loadMoreFacts(limit: Long): Flow<FactState> = callbackFlow {
-        baseQuery.limit(limit)
-        lastVisible?.let {
-            val query = baseQuery.startAfter(it.id)
-            val additionalSnapshot = query.get().await()
-            val additionalList: List<FactDataItem> = additionalSnapshot.toObjects(FactDataItem::class.java)
-            val additionalMappedList = mapper.listToFactItem(additionalList)
-            lastVisible = additionalSnapshot.documents.lastOrNull()
-
-            val additionalResponse = if (additionalMappedList.isNotEmpty())
-                FactState.Success(additionalMappedList)
-            else FactState.Success(emptyList())
-
-            trySend(additionalResponse)
+                    trySend(response).isSuccess
+                }
 
             awaitClose {
+                snapshotListener.remove()
                 close()
             }
         }
-    }
 
-    override suspend fun loadImagesForFacts(facts: List<FactItem>): List<FactItem> = withContext(Dispatchers.IO) {
-        val imageUris = mutableListOf<Uri?>()
+    override fun loadMoreFacts(limit: Long): Flow<FactState> =
+        callbackFlow {
+            baseQuery.limit(limit)
+            lastVisible?.let {
+                val query = baseQuery.startAfter(it.id)
+                val additionalSnapshot = query.get().await()
+                val additionalList: List<FactDataItem> = additionalSnapshot.toObjects(FactDataItem::class.java)
+                val additionalMappedList = mapper.listToFactItem(additionalList)
+                lastVisible = additionalSnapshot.documents.lastOrNull()
 
-        // Load images for each FactItem in parallel using async and awaitAll
-        val deferredImageLoads = facts.map { factItem ->
-            loadImageFromStorage(factItem.imagePath)
+                val additionalResponse =
+                    if (additionalMappedList.isNotEmpty()) {
+                        FactState.Success(additionalMappedList)
+                    } else {
+                        FactState.Success(emptyList())
+                    }
+
+                trySend(additionalResponse)
+
+                awaitClose {
+                    close()
+                }
+            }
         }
 
-        deferredImageLoads.forEach { uri ->
-            imageUris.add(uri)
-        }
+    override suspend fun loadImagesForFacts(facts: List<FactItem>): List<FactItem> =
+        withContext(Dispatchers.IO) {
+            val imageUris = mutableListOf<Uri?>()
 
-        return@withContext facts.mapIndexed { index, factItem ->
-            factItem.copy(imageUri = imageUris[index])
+            // Load images for each FactItem in parallel using async and awaitAll
+            val deferredImageLoads =
+                facts.map { factItem ->
+                    loadImageFromStorage(factItem.imagePath)
+                }
+
+            deferredImageLoads.forEach { uri ->
+                imageUris.add(uri)
+            }
+
+            return@withContext facts.mapIndexed { index, factItem ->
+                factItem.copy(imageUri = imageUris[index])
+            }
         }
-    }
 
     private suspend fun loadImageFromStorage(imagePath: String): Uri? {
         val storageRef = storage.getReferenceFromUrl(imagePath)

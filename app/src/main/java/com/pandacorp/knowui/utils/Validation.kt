@@ -7,8 +7,14 @@ object Validation {
 
     private fun isValidPassword(password: String): Boolean = password.isNotBlank() && password.length >= MIN_PASSWORD_LENGTH
 
-    fun isValidInput(email: String?, password: String?): Boolean {
-        return if (email == null || password == null) false
-        else isValidEmail(email) && isValidPassword(password)
+    fun isValidInput(
+        email: String?,
+        password: String?
+    ): Boolean {
+        return if (email == null || password == null) {
+            false
+        } else {
+            isValidEmail(email) && isValidPassword(password)
+        }
     }
 }

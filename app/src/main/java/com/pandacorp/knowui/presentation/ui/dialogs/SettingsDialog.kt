@@ -63,35 +63,39 @@ fun SettingsDialog(
         onDismiss()
     }) {
         Card(
-            modifier = Modifier
-                .padding(16.dp)
-                .heightIn(max = 350.dp),
+            modifier =
+                Modifier
+                    .padding(16.dp)
+                    .heightIn(max = 350.dp),
             border = GrayBorder,
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.primary,
-            )
+            colors =
+                CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                ),
         ) {
             Column {
                 Text(
                     text = title,
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier
-                        .padding(top = 8.dp, bottom = 20.dp)
-                        .align(Alignment.CenterHorizontally),
-                    color = Color.White
+                    modifier =
+                        Modifier
+                            .padding(top = 8.dp, bottom = 20.dp)
+                            .align(Alignment.CenterHorizontally),
+                    color = Color.White,
                 )
                 LazyColumn(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 8.dp)
-                        .weight(1f)
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 8.dp)
+                            .weight(1f),
                 ) {
                     items(itemsList) { item ->
                         ItemComponent(
                             isRoundedImage = isRoundedImage,
                             title = item.title,
-                            drawable = item.drawable
+                            drawable = item.drawable,
                         ) {
                             onValueAppliedListener(item.key)
                         }
@@ -99,9 +103,10 @@ fun SettingsDialog(
                 }
                 CompositionLocalProvider(LocalRippleTheme provides WhiteRippleTheme()) {
                     Button(
-                        modifier = Modifier
-                            .align(Alignment.End)
-                            .padding(bottom = 16.dp, end = 16.dp),
+                        modifier =
+                            Modifier
+                                .align(Alignment.End)
+                                .padding(bottom = 16.dp, end = 16.dp),
                         shape = RoundedCornerShape(50),
                         border = GrayBorder,
                         onClick = onDismiss,
@@ -124,28 +129,34 @@ fun ItemComponent(
 ) {
     CompositionLocalProvider(LocalRippleTheme provides WhiteRippleTheme()) {
         Row(
-            modifier = modifier
-                .fillMaxWidth()
-                .clickable(onClick = onClick)
+            modifier =
+                modifier
+                    .fillMaxWidth()
+                    .clickable(onClick = onClick),
         ) {
             Image(
                 painter = rememberDrawablePainter(drawable),
                 contentDescription = title,
-                modifier = Modifier
-                    .padding(start = 20.dp, end = 4.dp)
-                    .padding(vertical = 6.dp)
-                    .then(
-                        if (isRoundedImage) Modifier.clip(RoundedCornerShape(50.dp))
-                        else Modifier
-                    )
-                    .size(32.dp),
+                modifier =
+                    Modifier
+                        .padding(start = 20.dp, end = 4.dp)
+                        .padding(vertical = 6.dp)
+                        .then(
+                            if (isRoundedImage) {
+                                Modifier.clip(RoundedCornerShape(50.dp))
+                            } else {
+                                Modifier
+                            },
+                        )
+                        .size(32.dp),
             )
             Text(
                 text = title,
-                modifier = Modifier
-                    .padding(start = 16.dp)
-                    .align(Alignment.CenterVertically),
-                color = Color.White
+                modifier =
+                    Modifier
+                        .padding(start = 16.dp)
+                        .align(Alignment.CenterVertically),
+                color = Color.White,
             )
         }
     }
@@ -162,8 +173,8 @@ private fun fillThemesList(context: Context): List<SettingsDialogItem> {
             SettingsDialogItem(
                 keysList[i],
                 titlesList[i],
-                itemsList.getDrawable(i)!!
-            )
+                itemsList.getDrawable(i)!!,
+            ),
         )
     }
     itemsList.recycle()
@@ -182,8 +193,8 @@ private fun fillLanguagesList(context: Context): List<SettingsDialogItem> {
             SettingsDialogItem(
                 keysList[i],
                 titlesList[i],
-                drawablesList.getDrawable(i)!!
-            )
+                drawablesList.getDrawable(i)!!,
+            ),
         )
     }
     drawablesList.recycle()

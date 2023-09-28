@@ -22,19 +22,21 @@ class LoginViewModel(private val application: Application, private val authRepos
     var authErrorMessage: String? by mutableStateOf(null)
 
     fun validatePassword() {
-        passwordErrorMessage = when {
-            password.isEmpty() -> application.getString(R.string.emptyPassword)
-            password.length < Validation.MIN_PASSWORD_LENGTH -> application.getString(R.string.shortPassword)
-            else -> null
-        }
+        passwordErrorMessage =
+            when {
+                password.isEmpty() -> application.getString(R.string.emptyPassword)
+                password.length < Validation.MIN_PASSWORD_LENGTH -> application.getString(R.string.shortPassword)
+                else -> null
+            }
     }
 
     fun validateEmail() {
-        emailErrorMessage = when {
-            email.isBlank() -> application.getString(R.string.emptyEmail)
-            !Validation.isValidEmail(email) -> application.getString(R.string.invalidEmail)
-            else -> null
-        }
+        emailErrorMessage =
+            when {
+                email.isBlank() -> application.getString(R.string.emptyEmail)
+                !Validation.isValidEmail(email) -> application.getString(R.string.invalidEmail)
+                else -> null
+            }
     }
 
     fun signInAnonymously() {

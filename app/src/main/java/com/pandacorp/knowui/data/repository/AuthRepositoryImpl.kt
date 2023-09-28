@@ -13,22 +13,35 @@ class AuthRepositoryImpl(private val auth: FirebaseAuth) : AuthRepository {
         auth.signInAnonymously()
     }
 
-    override fun signIn(email: String, password: String, onResult: (AuthState) -> Unit) {
+    override fun signIn(
+        email: String,
+        password: String,
+        onResult: (AuthState) -> Unit
+    ) {
         auth.signInWithEmailAndPassword(email, password).addOnCompleteListener {
-            if (it.isSuccessful) onResult(AuthState.Success())
-            else onResult(AuthState.Error(it.exception?.localizedMessage ?: it.exception?.message))
+            if (it.isSuccessful) {
+                onResult(AuthState.Success())
+            } else {
+                onResult(AuthState.Error(it.exception?.localizedMessage ?: it.exception?.message))
+            }
         }
     }
 
-    override fun signUp(email: String, password: String, onResult: (AuthState) -> Unit) {
+    override fun signUp(
+        email: String,
+        password: String,
+        onResult: (AuthState) -> Unit
+    ) {
         auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener {
-            if (it.isSuccessful) onResult(AuthState.Success())
-            else onResult(AuthState.Error(it.exception?.localizedMessage ?: it.exception?.message))
+            if (it.isSuccessful) {
+                onResult(AuthState.Success())
+            } else {
+                onResult(AuthState.Error(it.exception?.localizedMessage ?: it.exception?.message))
+            }
         }
     }
 
     override fun signOut() {
         auth.signOut()
     }
-
 }

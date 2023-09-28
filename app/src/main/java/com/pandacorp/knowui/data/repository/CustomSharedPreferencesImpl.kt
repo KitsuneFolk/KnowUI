@@ -12,11 +12,9 @@ import com.pandacorp.knowui.utils.Constants
 
 class CustomSharedPreferencesImpl(private val context: Context) : CustomSharedPreferences {
     companion object {
-        fun getThemesKeys(context: Context): List<String> =
-            context.resources.getStringArray(R.array.Themes_keys).toList()
+        fun getThemesKeys(context: Context): List<String> = context.resources.getStringArray(R.array.Themes_keys).toList()
 
-        fun getLanguagesKeys(context: Context): List<String> =
-            context.resources.getStringArray(R.array.Languages_keys).toList()
+        fun getLanguagesKeys(context: Context): List<String> = context.resources.getStringArray(R.array.Languages_keys).toList()
     }
 
     private val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
@@ -33,11 +31,9 @@ class CustomSharedPreferencesImpl(private val context: Context) : CustomSharedPr
         sharedPreferences.edit().putString(Constants.Preferences.THEME_KEY, theme).apply()
     }
 
-    override fun getThemeLivedata(): LiveData<String> =
-        sharedPreferences.liveData(Constants.Preferences.THEME_KEY)
+    override fun getThemeLivedata(): LiveData<String> = sharedPreferences.liveData(Constants.Preferences.THEME_KEY)
 
-    override fun getLanguageLivedata(): LiveData<String> =
-        sharedPreferences.liveData(Constants.Preferences.LANGUAGE_KEY)
+    override fun getLanguageLivedata(): LiveData<String> = sharedPreferences.liveData(Constants.Preferences.LANGUAGE_KEY)
 
     override fun getTheme(): String {
         val defaultTheme = Constants.Preferences.THEME_DEFAULT

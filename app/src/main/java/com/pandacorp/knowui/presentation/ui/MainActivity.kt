@@ -35,7 +35,6 @@ import com.pandacorp.knowui.utils.Constants
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
 
@@ -59,19 +58,18 @@ class MainActivity : AppCompatActivity() {
 }
 
 @Composable
-private fun MainActivityContent(
-    isSigned: Boolean = true,
-) {
+private fun MainActivityContent(isSigned: Boolean = true,) {
     val navController = rememberFragulaNavController()
 
     // viewModelStoreOwner to provide shared viewmodels for composable functions
-    val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
-        "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
-    }
+    val viewModelStoreOwner =
+        checkNotNull(LocalViewModelStoreOwner.current) {
+            "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
+        }
 
     Surface(
         modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
+        color = MaterialTheme.colorScheme.background,
     ) {
         AnimatedContent(
             targetState = isSigned,
@@ -79,9 +77,10 @@ private fun MainActivityContent(
             transitionSpec = {
                 slideInHorizontally(
                     animationSpec = tween(500, easing = LinearEasing),
-                    initialOffsetX = { it }) togetherWith
-                        slideOutHorizontally(animationSpec = tween(500, easing = LinearEasing))
-            }
+                    initialOffsetX = { it },
+                ) togetherWith
+                    slideOutHorizontally(animationSpec = tween(500, easing = LinearEasing))
+            },
         ) {
             when (it) {
                 true -> {

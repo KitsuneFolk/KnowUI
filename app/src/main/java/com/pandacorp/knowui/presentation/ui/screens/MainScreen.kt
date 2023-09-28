@@ -78,12 +78,14 @@ fun MainScreen(
                 MainAppBar {
                     navController!!.navigate(Constants.Screen.SETTINGS)
                 }
-            }) { padding ->
+            },
+        ) { padding ->
             // Use inside of a Box to apply the padding right
             Box(
-                modifier = Modifier
-                    .padding(padding)
-                    .fillMaxSize()
+                modifier =
+                    Modifier
+                        .padding(padding)
+                        .fillMaxSize(),
             ) {
                 val facts = factsViewModel.facts.value
 
@@ -99,17 +101,19 @@ fun MainScreen(
                         onFactClick = { fact ->
                             currentFactViewModel.setFact(fact)
                             navController!!.navigate(Constants.Screen.FACT)
-                        })
+                        },
+                    )
                     if (facts is FactState.Error) {
                         Snackbar(
-                            modifier = Modifier
-                                .padding(bottom = 40.dp, start = 15.dp, end = 15.dp)
-                                .align(Alignment.BottomCenter),
-                            containerColor = MaterialTheme.colorScheme.surface
+                            modifier =
+                                Modifier
+                                    .padding(bottom = 40.dp, start = 15.dp, end = 15.dp)
+                                    .align(Alignment.BottomCenter),
+                            containerColor = MaterialTheme.colorScheme.surface,
                         ) {
                             Text(
                                 text = stringResource(id = R.string.loading_error),
-                                color = Color.White
+                                color = Color.White,
                             )
                         }
                     }
@@ -130,26 +134,28 @@ private fun Pager(
     onFactClick: (fact: FactItem) -> Unit = {},
 ) {
     var facts: List<FactItem> = emptyList()
-    val pagerState = rememberPagerState(
-        initialPage = 0,
-        initialPageOffsetFraction = 0f
-    ) {
-        return@rememberPagerState facts.size
-    }
-    facts = if (isShowPlaceholder) {
-        val placeholderFact = FactItem()
-        List(5) { placeholderFact }
-    } else {
-        if (isLoadMore) {
-            val isAtTargetValue by remember(pagerState.currentPage) {
-                mutableStateOf(pagerState.currentPage == items.size - 1 - buffer)
-            }
-            LaunchedEffect(isAtTargetValue) {
-                if (isAtTargetValue) onLoadMore()
-            }
+    val pagerState =
+        rememberPagerState(
+            initialPage = 0,
+            initialPageOffsetFraction = 0f,
+        ) {
+            return@rememberPagerState facts.size
         }
-        items
-    }
+    facts =
+        if (isShowPlaceholder) {
+            val placeholderFact = FactItem()
+            List(5) { placeholderFact }
+        } else {
+            if (isLoadMore) {
+                val isAtTargetValue by remember(pagerState.currentPage) {
+                    mutableStateOf(pagerState.currentPage == items.size - 1 - buffer)
+                }
+                LaunchedEffect(isAtTargetValue) {
+                    if (isAtTargetValue) onLoadMore()
+                }
+            }
+            items
+        }
 
     VerticalPager(
         modifier = Modifier.fillMaxHeight(),
@@ -161,11 +167,11 @@ private fun Pager(
                 isReachedEnd = ((pageIndex == facts.size - 1) && !isLoadMore),
                 content = factItem.contentEnglish,
                 imageUri = factItem.imageUri,
-                tags = factItem.tags
+                tags = factItem.tags,
             ) {
                 onFactClick(facts[pageIndex])
             }
-        }
+        },
     )
 }
 
@@ -184,45 +190,54 @@ private fun CardComponent(
     Column {
         Card(
             elevation = CardDefaults.cardElevation(4.dp),
-            modifier = modifier
-                .then(
-                    if (isReachedEnd) Modifier.fillMaxHeight(if (isLandscape) 0.75f else 0.9f)
-                    else Modifier.fillMaxHeight()
-                )
-                .fillMaxWidth()
-                .padding(8.dp)
-                .clip(shape = RoundedCornerShape(20.dp))
-                .clickable(onClick = {
-                    if (!isPlaceHolder && imageUri != null) onClick()
-                }),
+            modifier =
+                modifier
+                    .then(
+                        if (isReachedEnd) {
+                            Modifier.fillMaxHeight(if (isLandscape) 0.75f else 0.9f)
+                        } else {
+                            Modifier.fillMaxHeight()
+                        },
+                    )
+                    .fillMaxWidth()
+                    .padding(8.dp)
+                    .clip(shape = RoundedCornerShape(20.dp))
+                    .clickable(onClick = {
+                        if (!isPlaceHolder && imageUri != null) onClick()
+                    }),
             shape = RoundedCornerShape(20.dp),
-            border = GrayBorder
+            border = GrayBorder,
         ) {
-            if (isPlaceHolder) CardPlaceholderContent()
-            else {
-                if (isLandscape) CardLandscapeContent(
-                    modifier = Modifier.background(MaterialTheme.colorScheme.surface),
-                    imageUri = imageUri,
-                    content = content,
-                    tags = tags
-                )
-                else CardPortraitContent(
-                    modifier = Modifier.background(MaterialTheme.colorScheme.surface),
-                    imageUri = imageUri,
-                    content = content,
-                    tags = tags
-                )
+            if (isPlaceHolder) {
+                CardPlaceholderContent()
+            } else {
+                if (isLandscape) {
+                    CardLandscapeContent(
+                        modifier = Modifier.background(MaterialTheme.colorScheme.surface),
+                        imageUri = imageUri,
+                        content = content,
+                        tags = tags,
+                    )
+                } else {
+                    CardPortraitContent(
+                        modifier = Modifier.background(MaterialTheme.colorScheme.surface),
+                        imageUri = imageUri,
+                        content = content,
+                        tags = tags,
+                    )
+                }
             }
         }
 
         if (isReachedEnd) {
             Text(
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(horizontal = 16.dp)
-                    .padding(top = 4.dp, bottom = 8.dp),
+                modifier =
+                    Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .padding(horizontal = 16.dp)
+                        .padding(top = 4.dp, bottom = 8.dp),
                 text = stringResource(id = R.string.end_reached),
-                color = Color.White
+                color = Color.White,
             )
         }
     }
@@ -231,20 +246,22 @@ private fun CardComponent(
 @Composable
 fun CardPlaceholderContent() {
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.surface)
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.surface),
     ) {
         Text(
-            modifier = Modifier
-                .align(Alignment.Center)
-                .shimmer(
-                    rememberShimmer(ShimmerBounds.View, theme = Animations.ShimmerTheme)
-                )
-                .padding(top = 4.dp),
+            modifier =
+                Modifier
+                    .align(Alignment.Center)
+                    .shimmer(
+                        rememberShimmer(ShimmerBounds.View, theme = Animations.ShimmerTheme),
+                    )
+                    .padding(top = 4.dp),
             text = stringResource(id = R.string.loading),
             fontSize = 18.sp,
-            color = Color.White
+            color = Color.White,
         )
     }
 }
@@ -262,31 +279,38 @@ fun CardLandscapeContent(
     }
 
     Row(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(horizontal = 4.dp, vertical = 8.dp)
+        modifier =
+            modifier
+                .fillMaxSize()
+                .padding(horizontal = 4.dp, vertical = 8.dp),
     ) {
         Box(
-            modifier = Modifier
-                .align(Alignment.CenterVertically)
-                .then(
-                    if (isLoading) Modifier
-                        .shimmer(
-                            rememberShimmer(
-                                ShimmerBounds.View,
-                                theme = Animations.ShimmerTheme
-                            )
-                        ) else Modifier
-                )
+            modifier =
+                Modifier
+                    .align(Alignment.CenterVertically)
+                    .then(
+                        if (isLoading) {
+                            Modifier
+                                .shimmer(
+                                    rememberShimmer(
+                                        ShimmerBounds.View,
+                                        theme = Animations.ShimmerTheme,
+                                    ),
+                                )
+                        } else {
+                            Modifier
+                        },
+                    ),
         ) {
             if (isLoading) { // Show a loading text
                 Text(modifier = Modifier.align(Alignment.Center), text = stringResource(id = R.string.loading))
             }
             AsyncImage(
-                modifier = Modifier
-                    .padding(start = 8.dp)
-                    .fillMaxHeight(0.8f)
-                    .fillMaxWidth(0.4f),
+                modifier =
+                    Modifier
+                        .padding(start = 8.dp)
+                        .fillMaxHeight(0.8f)
+                        .fillMaxWidth(0.4f),
                 model = imageUri,
                 onSuccess = {
                     isLoading = false
@@ -296,23 +320,25 @@ fun CardLandscapeContent(
         }
         Column {
             Text(
-                modifier = Modifier
-                    .padding(start = 12.dp)
-                    .weight(1f)
-                    .then(
-                        if (enableScroll) Modifier.verticalScroll(rememberScrollState()) else Modifier
-                    ),
+                modifier =
+                    Modifier
+                        .padding(start = 12.dp)
+                        .weight(1f)
+                        .then(
+                            if (enableScroll) Modifier.verticalScroll(rememberScrollState()) else Modifier,
+                        ),
                 text = content,
                 color = Color.White,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
             )
 
             Text(
-                modifier = Modifier
-                    .padding(horizontal = 12.dp, vertical = 4.dp),
+                modifier =
+                    Modifier
+                        .padding(horizontal = 12.dp, vertical = 4.dp),
                 text = formatTags(tags = tags),
                 color = Color.White,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
             )
         }
     }
@@ -331,30 +357,37 @@ fun CardPortraitContent(
     }
 
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(16.dp)
+        modifier =
+            modifier
+                .fillMaxSize()
+                .padding(16.dp),
     ) {
         Box(
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .then(
-                    if (isLoading) Modifier
-                        .shimmer(
-                            rememberShimmer(
-                                ShimmerBounds.View,
-                                theme = Animations.ShimmerTheme
-                            )
-                        ) else Modifier
-                )
+            modifier =
+                Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .then(
+                        if (isLoading) {
+                            Modifier
+                                .shimmer(
+                                    rememberShimmer(
+                                        ShimmerBounds.View,
+                                        theme = Animations.ShimmerTheme,
+                                    ),
+                                )
+                        } else {
+                            Modifier
+                        },
+                    ),
         ) {
             if (isLoading) { // Show a loading text
                 Text(modifier = Modifier.align(Alignment.Center), text = stringResource(id = R.string.loading))
             }
             AsyncImage(
-                modifier = Modifier
-                    .fillMaxHeight(0.4f)
-                    .fillMaxWidth(1f),
+                modifier =
+                    Modifier
+                        .fillMaxHeight(0.4f)
+                        .fillMaxWidth(1f),
                 model = imageUri,
                 onSuccess = {
                     isLoading = false
@@ -363,22 +396,23 @@ fun CardPortraitContent(
             )
         }
         Text(
-            modifier = Modifier
-                .padding(top = 6.dp)
-                .weight(1f)
-                .then(
-                    if (enableScroll) Modifier.verticalScroll(rememberScrollState()) else Modifier
-                ),
+            modifier =
+                Modifier
+                    .padding(top = 6.dp)
+                    .weight(1f)
+                    .then(
+                        if (enableScroll) Modifier.verticalScroll(rememberScrollState()) else Modifier,
+                    ),
             text = content,
             color = Color.White,
-            overflow = TextOverflow.Ellipsis
+            overflow = TextOverflow.Ellipsis,
         )
 
         Text(
             modifier = Modifier.padding(top = 6.dp, bottom = 4.dp),
             text = formatTags(tags = tags),
             color = Color.White,
-            overflow = TextOverflow.Ellipsis
+            overflow = TextOverflow.Ellipsis,
         )
     }
 }
@@ -390,13 +424,12 @@ fun MainAppBar(onClick: () -> Unit = {}) {
         title = {
             Text(text = stringResource(id = R.string.app_name))
         },
-
         colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = MaterialTheme.colorScheme.primary),
         actions = {
             IconButton(onClick = onClick) {
                 Icon(Icons.Default.Settings, contentDescription = stringResource(id = R.string.settings))
             }
-        }
+        },
     )
 }
 

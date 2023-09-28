@@ -7,9 +7,10 @@ import com.pandacorp.knowui.presentation.viewmodel.PreferencesViewModel
 import org.koin.androidx.viewmodel.dsl.viewModelOf
 import org.koin.dsl.module
 
-val ViewModelModule = module {
-    viewModelOf(::PreferencesViewModel)
-    viewModelOf(::FactsViewModel)
-    viewModelOf(::CurrentFactViewModel)
-    viewModelOf(::LoginViewModel)
-}
+val ViewModelModule =
+    module {
+        viewModelOf(::PreferencesViewModel)
+        viewModelOf(::FactsViewModel)
+        viewModelOf(::CurrentFactViewModel)
+        viewModelOf(::LoginViewModel)
+    }

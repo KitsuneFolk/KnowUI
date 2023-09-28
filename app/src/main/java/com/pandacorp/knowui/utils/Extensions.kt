@@ -10,8 +10,12 @@ import android.os.Build
  */
 fun Context.getAppVersion(): String {
     val flags = 0
-    val packageInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
-        packageManager.getPackageInfo(packageName, PackageManager.PackageInfoFlags.of(flags.toLong()))
-    else @Suppress("DEPRECATION") packageManager.getPackageInfo(packageName, flags)
+    val packageInfo =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            packageManager.getPackageInfo(packageName, PackageManager.PackageInfoFlags.of(flags.toLong()))
+        } else {
+            @Suppress("DEPRECATION")
+            packageManager.getPackageInfo(packageName, flags)
+        }
     return packageInfo.versionName
 }

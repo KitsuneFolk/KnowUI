@@ -52,58 +52,61 @@ import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginScreen(
-    vm: LoginViewModel = koinViewModel(),
-) {
+fun LoginScreen(vm: LoginViewModel = koinViewModel(),) {
     val state = rememberCoroutineScope()
 
     Surface(
         modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
+        color = MaterialTheme.colorScheme.background,
     ) {
-        val snackbarState = remember {
-            SnackbarHostState()
-        }
+        val snackbarState =
+            remember {
+                SnackbarHostState()
+            }
 
         Scaffold(snackbarHost = {
             SnackbarHost(snackbarState) { data ->
                 Snackbar(
-                    containerColor = MaterialTheme.colorScheme.primary
+                    containerColor = MaterialTheme.colorScheme.primary,
                 ) {
                     Text(
                         text = data.visuals.message,
                         color = Color.White,
-                        maxLines = 3
+                        maxLines = 3,
                     )
                 }
             }
         }) { paddings ->
             Column(
-                modifier = Modifier
-                    .padding(paddings)
-                    .padding(16.dp)
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState()),
-                horizontalAlignment = Alignment.CenterHorizontally
+                modifier =
+                    Modifier
+                        .padding(paddings)
+                        .padding(16.dp)
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState()),
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                val textFieldColors = TextFieldDefaults.outlinedTextFieldColors(
-                    containerColor = MaterialTheme.colorScheme.primary.copy(0.8f),
-                    unfocusedBorderColor = Color.Gray,
-                    focusedBorderColor = Color.White.copy(0.9f),
-                    selectionColors = TextSelectionColors(
-                        handleColor = MaterialTheme.colorScheme.secondary,
-                        backgroundColor = MaterialTheme.colorScheme.secondary.copy(0.5f)
-                    ),
-                    cursorColor = MaterialTheme.colorScheme.secondary,
-                )
+                val textFieldColors =
+                    TextFieldDefaults.outlinedTextFieldColors(
+                        containerColor = MaterialTheme.colorScheme.primary.copy(0.8f),
+                        unfocusedBorderColor = Color.Gray,
+                        focusedBorderColor = Color.White.copy(0.9f),
+                        selectionColors =
+                            TextSelectionColors(
+                                handleColor = MaterialTheme.colorScheme.secondary,
+                                backgroundColor = MaterialTheme.colorScheme.secondary.copy(0.5f),
+                            ),
+                        cursorColor = MaterialTheme.colorScheme.secondary,
+                    )
 
                 Text(
-                    modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                        .padding(vertical = 14.dp),
+                    modifier =
+                        Modifier
+                            .align(Alignment.CenterHorizontally)
+                            .padding(vertical = 14.dp),
                     text = stringResource(if (vm.showSignIn) R.string.signIn else R.string.signUp),
                     fontSize = 24.sp,
-                    color = Color.White
+                    color = Color.White,
                 )
 
                 Spacer(modifier = Modifier.weight(1f, true))
@@ -126,7 +129,7 @@ fun LoginScreen(
                             Text(
                                 modifier = Modifier.fillMaxWidth(),
                                 text = it,
-                                color = MaterialTheme.colorScheme.error
+                                color = MaterialTheme.colorScheme.error,
                             )
                         }
                     },
@@ -150,15 +153,18 @@ fun LoginScreen(
                             Text(
                                 modifier = Modifier.fillMaxWidth(),
                                 text = it,
-                                color = MaterialTheme.colorScheme.error
+                                color = MaterialTheme.colorScheme.error,
                             )
                         }
                     },
                     visualTransformation = if (vm.isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                     trailingIcon = {
-                        val image = if (vm.isPasswordVisible)
-                            Icons.Filled.Visibility
-                        else Icons.Filled.VisibilityOff
+                        val image =
+                            if (vm.isPasswordVisible) {
+                                Icons.Filled.Visibility
+                            } else {
+                                Icons.Filled.VisibilityOff
+                            }
                         IconButton(onClick = { vm.isPasswordVisible = !vm.isPasswordVisible }) {
                             Icon(imageVector = image, contentDescription = null)
                         }
@@ -167,10 +173,11 @@ fun LoginScreen(
 
                 CompositionLocalProvider(LocalRippleTheme provides WhiteRippleTheme()) {
                     Button(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp)
-                            .padding(top = 12.dp),
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp)
+                                .padding(top = 12.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                         enabled = Validation.isValidInput(vm.email, vm.password),
                         onClick = {
@@ -205,15 +212,16 @@ fun LoginScreen(
                     ) {
                         Text(
                             text = stringResource(if (vm.showSignIn) R.string.signIn else R.string.signUp),
-                            color = Color.White
+                            color = Color.White,
                         )
                     }
                 }
                 CompositionLocalProvider(LocalRippleTheme provides WhiteRippleTheme()) {
                     TextButton(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 8.dp),
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 8.dp),
                         onClick = {
                             vm.signInAnonymously()
                             vm.isSigned = true
@@ -228,7 +236,7 @@ fun LoginScreen(
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
                         text = stringResource(if (vm.showSignIn) R.string.signUpSuggestion else R.string.signInSuggestion),
-                        color = Color.White
+                        color = Color.White,
                     )
 
                     CompositionLocalProvider(LocalRippleTheme provides WhiteRippleTheme()) {
@@ -236,11 +244,11 @@ fun LoginScreen(
                             modifier = Modifier.padding(start = 8.dp, end = 4.dp),
                             onClick = {
                                 vm.showSignIn = !vm.showSignIn
-                            }
+                            },
                         ) {
                             Text(
                                 text = stringResource(if (vm.showSignIn) R.string.signUp else R.string.signIn),
-                                color = MaterialTheme.colorScheme.secondary
+                                color = MaterialTheme.colorScheme.secondary,
                             )
                         }
                     }

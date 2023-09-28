@@ -70,7 +70,7 @@ fun FixedTopAppBar(
         actions = actions,
         windowInsets = windowInsets,
         colors = colors,
-        scrollBehavior = scrollBehavior
+        scrollBehavior = scrollBehavior,
     )
 }
 
@@ -108,44 +108,50 @@ private fun SingleRowTopAppBar(
         Row(
             horizontalArrangement = Arrangement.End,
             verticalAlignment = Alignment.CenterVertically,
-            content = actions
+            content = actions,
         )
     }
 
     // Set up support for resizing the top app bar when vertically dragging the bar itself.
-    val appBarDragModifier = if (scrollBehavior != null && !scrollBehavior.isPinned) {
-        Modifier.draggable(
-            orientation = Orientation.Vertical,
-            state = rememberDraggableState { delta ->
-                scrollBehavior.state.heightOffset = scrollBehavior.state.heightOffset + delta
-            },
-            onDragStopped = { velocity ->
-                settleAppBar(
-                    scrollBehavior.state,
-                    velocity,
-                    scrollBehavior.flingAnimationSpec,
-                    scrollBehavior.snapAnimationSpec
-                )
-            }
-        )
-    } else {
-        Modifier
-    }
+    val appBarDragModifier =
+        if (scrollBehavior != null && !scrollBehavior.isPinned) {
+            Modifier.draggable(
+                orientation = Orientation.Vertical,
+                state =
+                    rememberDraggableState { delta ->
+                        scrollBehavior.state.heightOffset = scrollBehavior.state.heightOffset + delta
+                    },
+                onDragStopped = { velocity ->
+                    settleAppBar(
+                        scrollBehavior.state,
+                        velocity,
+                        scrollBehavior.flingAnimationSpec,
+                        scrollBehavior.snapAnimationSpec,
+                    )
+                },
+            )
+        } else {
+            Modifier
+        }
 
     // Compose a Surface with a TopAppBarLayout content.
     // The surface's background color is animated as specified above.
     // The height of the app bar is determined by subtracting the bar's height offset from the
     // app bar's defined constant height value (i.e. the ContainerHeight token).
     Surface(modifier = modifier.then(appBarDragModifier), color = appBarContainerColor) {
-        val height = LocalDensity.current.run {
-            TopAppBarSmallTokens.ContainerHeight.toPx() + (scrollBehavior?.state?.heightOffset
-                ?: 0f)
-        }
+        val height =
+            LocalDensity.current.run {
+                TopAppBarSmallTokens.ContainerHeight.toPx() + (
+                    scrollBehavior?.state?.heightOffset
+                        ?: 0f
+                )
+            }
         TopAppBarLayout(
-            modifier = Modifier
-                .windowInsetsPadding(windowInsets)
-                // clip after padding so we don't show the title over the inset area
-                .clipToBounds(),
+            modifier =
+                Modifier
+                    .windowInsetsPadding(windowInsets)
+                    // clip after padding so we don't show the title over the inset area
+                    .clipToBounds(),
             heightPx = height,
             navigationIconContentColor = colors.navigationIconContentColor,
             titleContentColor = colors.titleContentColor,
@@ -153,7 +159,7 @@ private fun SingleRowTopAppBar(
             title = title,
             titleTextStyle = titleTextStyle,
             titleHorizontalArrangement =
-            Arrangement.Start,
+                Arrangement.Start,
             titleBottomPadding = 0,
             hideTitleSemantics = false,
             navigationIcon = navigationIcon,
@@ -211,7 +217,7 @@ private suspend fun settleAppBar(
                 } else {
                     state.heightOffsetLimit
                 },
-                animationSpec = snapAnimationSpec
+                animationSpec = snapAnimationSpec,
             ) { state.heightOffset = value }
         }
     }
@@ -241,38 +247,38 @@ private fun TopAppBarLayout(
             Box(
                 Modifier
                     .layoutId("navigationIcon")
-                    .padding(start = TopAppBarHorizontalPadding)
+                    .padding(start = TopAppBarHorizontalPadding),
             ) {
                 CompositionLocalProvider(
                     LocalContentColor provides navigationIconContentColor,
-                    content = navigationIcon
+                    content = navigationIcon,
                 )
             }
             Box(
                 Modifier
                     .layoutId("title")
                     .padding(horizontal = TopAppBarHorizontalPadding)
-                    .then(if (hideTitleSemantics) Modifier.clearAndSetSemantics { } else Modifier)
+                    .then(if (hideTitleSemantics) Modifier.clearAndSetSemantics { } else Modifier),
             ) {
                 ProvideTextStyle(value = titleTextStyle) {
                     CompositionLocalProvider(
                         LocalContentColor provides titleContentColor.copy(alpha = titleAlpha),
-                        content = title
+                        content = title,
                     )
                 }
             }
             Box(
                 Modifier
                     .layoutId("actionIcons")
-                    .padding(end = TopAppBarHorizontalPadding)
+                    .padding(end = TopAppBarHorizontalPadding),
             ) {
                 CompositionLocalProvider(
                     LocalContentColor provides actionIconContentColor,
-                    content = actions
+                    content = actions,
                 )
             }
         },
-        modifier = modifier
+        modifier = modifier,
     ) { measurables, constraints ->
         val navigationIconPlaceable =
             measurables.first { it.layoutId == "navigationIcon" }
@@ -281,12 +287,13 @@ private fun TopAppBarLayout(
             measurables.first { it.layoutId == "actionIcons" }
                 .measure(constraints.copy(minWidth = 0))
 
-        val maxTitleWidth = if (constraints.maxWidth == Constraints.Infinity) {
-            constraints.maxWidth
-        } else {
-            (constraints.maxWidth - navigationIconPlaceable.width - actionIconsPlaceable.width)
-                .coerceAtLeast(0)
-        }
+        val maxTitleWidth =
+            if (constraints.maxWidth == Constraints.Infinity) {
+                constraints.maxWidth
+            } else {
+                (constraints.maxWidth - navigationIconPlaceable.width - actionIconsPlaceable.width)
+                    .coerceAtLeast(0)
+            }
         val titlePlaceable =
             measurables.first { it.layoutId == "title" }
                 .measure(constraints.copy(minWidth = 0, maxWidth = maxTitleWidth))
@@ -305,39 +312,45 @@ private fun TopAppBarLayout(
             // Navigation icon
             navigationIconPlaceable.placeRelative(
                 x = 0,
-                y = (layoutHeight - navigationIconPlaceable.height) / 2
+                y = (layoutHeight - navigationIconPlaceable.height) / 2,
             )
 
             // Title
             titlePlaceable.placeRelative(
-                x = when (titleHorizontalArrangement) {
-                    Arrangement.Center -> (constraints.maxWidth - titlePlaceable.width) / 2
-                    Arrangement.End ->
-                        constraints.maxWidth - titlePlaceable.width - actionIconsPlaceable.width
-                    // Arrangement.Start.
-                    // An TopAppBarTitleInset will make sure the title is offset in case the
-                    // navigation icon is missing.
-                    else -> max(TopAppBarTitleInset.roundToPx(), navigationIconPlaceable.width)
-                },
-                y = when (titleVerticalArrangement) {
-                    Arrangement.Center -> (layoutHeight - titlePlaceable.height) / 2
-                    // Apply bottom padding from the title's baseline only when the Arrangement is
-                    // "Bottom".
-                    Arrangement.Bottom ->
-                        if (titleBottomPadding == 0) layoutHeight - titlePlaceable.height
-                        else layoutHeight - titlePlaceable.height - max(
-                            0,
-                            titleBottomPadding - titlePlaceable.height + titleBaseline
-                        )
-                    // Arrangement.Top
-                    else -> 0
-                }
+                x =
+                    when (titleHorizontalArrangement) {
+                        Arrangement.Center -> (constraints.maxWidth - titlePlaceable.width) / 2
+                        Arrangement.End ->
+                            constraints.maxWidth - titlePlaceable.width - actionIconsPlaceable.width
+                        // Arrangement.Start.
+                        // An TopAppBarTitleInset will make sure the title is offset in case the
+                        // navigation icon is missing.
+                        else -> max(TopAppBarTitleInset.roundToPx(), navigationIconPlaceable.width)
+                    },
+                y =
+                    when (titleVerticalArrangement) {
+                        Arrangement.Center -> (layoutHeight - titlePlaceable.height) / 2
+                        // Apply bottom padding from the title's baseline only when the Arrangement is
+                        // "Bottom".
+                        Arrangement.Bottom ->
+                            if (titleBottomPadding == 0) {
+                                layoutHeight - titlePlaceable.height
+                            } else {
+                                layoutHeight - titlePlaceable.height -
+                                    max(
+                                        0,
+                                        titleBottomPadding - titlePlaceable.height + titleBaseline,
+                                    )
+                            }
+                        // Arrangement.Top
+                        else -> 0
+                    },
             )
 
             // Action icons
             actionIconsPlaceable.placeRelative(
                 x = constraints.maxWidth - actionIconsPlaceable.width,
-                y = (layoutHeight - actionIconsPlaceable.height) / 2
+                y = (layoutHeight - actionIconsPlaceable.height) / 2,
             )
         }
     }
@@ -357,7 +370,6 @@ class TopAppBarColors internal constructor(
     internal val titleContentColor: Color,
     internal val actionIconContentColor: Color,
 ) {
-
     /**
      * Represents the container color used for the top app bar.
      *
@@ -373,7 +385,7 @@ class TopAppBarColors internal constructor(
         return lerp(
             containerColor,
             scrolledContainerColor,
-            FastOutLinearInEasing.transform(colorTransitionFraction)
+            FastOutLinearInEasing.transform(colorTransitionFraction),
         )
     }
 
@@ -404,7 +416,6 @@ class TopAppBarColors internal constructor(
 /** Contains default values used for the top app bar implementations. */
 @ExperimentalMaterial3Api
 object TopAppBarDefaults {
-
     /**
      * Creates a [TopAppBarColors] for small top app bars. The default implementation animates
      * between the provided colors according to the Material Design specification.
@@ -419,10 +430,11 @@ object TopAppBarDefaults {
     @Composable
     fun smallTopAppBarColors(
         containerColor: Color = TopAppBarSmallTokens.ContainerColor.toColor(),
-        scrolledContainerColor: Color = MaterialTheme.colorScheme.applyTonalElevation(
-            backgroundColor = containerColor,
-            elevation = TopAppBarSmallTokens.OnScrollContainerElevation
-        ),
+        scrolledContainerColor: Color =
+            MaterialTheme.colorScheme.applyTonalElevation(
+                backgroundColor = containerColor,
+                elevation = TopAppBarSmallTokens.OnScrollContainerElevation,
+            ),
         navigationIconContentColor: Color = TopAppBarSmallTokens.LeadingIconColor.toColor(),
         titleContentColor: Color = TopAppBarSmallTokens.HeadlineColor.toColor(),
         actionIconContentColor: Color = TopAppBarSmallTokens.TrailingIconColor.toColor(),
@@ -432,7 +444,7 @@ object TopAppBarDefaults {
             scrolledContainerColor,
             navigationIconContentColor,
             titleContentColor,
-            actionIconContentColor
+            actionIconContentColor,
         )
 
     /**
@@ -440,8 +452,9 @@ object TopAppBarDefaults {
      */
     val windowInsets: WindowInsets
         @Composable
-        get() = WindowInsets.systemBarsForVisualComponents
-            .only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top)
+        get() =
+            WindowInsets.systemBarsForVisualComponents
+                .only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top)
 }
 
 private val TopAppBarHorizontalPadding = 4.dp
